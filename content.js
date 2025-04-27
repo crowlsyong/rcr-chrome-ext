@@ -115,28 +115,40 @@ function getTextColor(score) {
             newBox.addEventListener("mouseenter", function () {
                 const rect = newBox.getBoundingClientRect();
             
+                // Create popup element
                 const popup = document.createElement("div");
                 popup.style.position = "absolute";
                 popup.style.top = `${rect.top + window.scrollY - 60}px`;
-                popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 5}px`;
+                popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 10}px`;
                 popup.style.backgroundColor = "#0F1729";
                 popup.style.borderRadius = "10px";
                 popup.style.border = "2px solid #222c3f";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
                 popup.style.padding = "16px";
                 popup.style.zIndex = "1000";
+                popup.style.opacity = "0";  // Initial opacity for popup
+                popup.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for popup
             
+                // Create iframe element
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/user/${username}`;
                 iframe.style.width = "448px";
-                iframe.style.height = "288px";
+                iframe.style.height = "243px";
                 iframe.style.border = "none";
                 iframe.style.overflow = "hidden";
                 iframe.style.backgroundColor = "#0F1729";
-
-
+                iframe.style.opacity = "0";  // Initial opacity for iframe
+                iframe.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for iframe
+            
+                // Append iframe to popup and popup to body
                 popup.appendChild(iframe);
                 document.body.appendChild(popup);
+            
+                // Trigger fade-in for both popup and iframe
+                setTimeout(() => {
+                    popup.style.opacity = "1";  // Fade-in the popup
+                    iframe.style.opacity = "1";  // Fade-in the iframe
+                }, 10);  // Small delay to ensure transition works
             
                 let isOverBoxOrPopup = true;
             
