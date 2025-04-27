@@ -106,7 +106,64 @@
                     <div class="text-ink-600 mx-auto -mt-1 text-xs transition-all">credit score</div>
                 </div>
             `;
-
+            newBox.addEventListener("mouseenter", function () {
+                // Get the position of the newBox relative to the document
+                const rect = newBox.getBoundingClientRect();
+                
+                // Create the popup container
+                const popup = document.createElement("div");
+                popup.style.position = "absolute"; // Absolute position relative to the document
+                popup.style.top = `${rect.top + window.scrollY - 60}px`; // Position it 5px below the top of the newBox
+                popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 5}px`; // 5px to the right of the newBox
+                popup.style.backgroundColor = "#0F1729";
+                popup.style.borderRadius = "10px";
+                popup.style.border = "2px solid #222c3f"; // Slightly blue border
+                popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+                popup.style.padding = "16px"; // 16px padding
+                popup.style.zIndex = "1000"; // Make sure it's on top
+                
+                // Create the iframe
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://risk.deno.dev/user/${username}`;
+                iframe.style.width = "448px"; // Set width
+                iframe.style.height = "288px"; // Set height
+                iframe.style.border = "none"; 
+                iframe.style.overflow = "hidden";
+                iframe.style.backgroundColor = "#0F1729"; // Dark blue background
+                iframe.style.transition = "height 0.3s ease";
+                
+                // Create the close button (X)
+                const closeButton = document.createElement("button");
+                closeButton.textContent = "X";
+                closeButton.style.position = "absolute";
+                closeButton.style.top = "5px";
+                closeButton.style.right = "5px";
+                closeButton.style.background = "0,0,0,0"; // Transparent background
+                closeButton.style.color = "white";
+                closeButton.style.border = "none";
+                closeButton.style.borderRadius = "10%";
+                closeButton.style.padding = "5px 5px";
+                closeButton.style.cursor = "pointer";
+                closeButton.style.fontSize = "8px";
+                closeButton.addEventListener("click", function () {
+                    document.body.removeChild(popup); // Close the popup when X is clicked
+                });
+                
+                // Append iframe and close button to the popup
+                popup.appendChild(iframe);
+                popup.appendChild(closeButton);
+                
+                // Append the popup to the body
+                document.body.appendChild(popup);
+            
+                // Close the popup when the mouse leaves the newBox
+                newBox.addEventListener("mouseleave", function () {
+                    document.body.removeChild(popup); // Remove the popup
+                }, { once: true }); // Ensure the event listener only runs once
+            });
+            
+            
+            
             // Find all the existing boxes inside the row
             const boxes = container.querySelectorAll(".group.cursor-pointer");
 
