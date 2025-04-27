@@ -8,6 +8,23 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // Check if the URL has changed
+  if (changeInfo.url) {
+      // Send the new URL to content script
+      chrome.tabs.sendMessage(tabId, {
+          message: 'urlChanged',
+          url: changeInfo.url
+      });
+
+      // Trigger fade-to-black effect (send message to content.js)
+      chrome.tabs.sendMessage(tabId, {
+          message: 'fadeToBlack'
+      });
+  }
+});
+
+
 // Listener for when the toggle state changes in popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === 'toggleStateChanged') {

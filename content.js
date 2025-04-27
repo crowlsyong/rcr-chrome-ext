@@ -1,4 +1,45 @@
 (function () {
+
+    // content.js
+// Function to trigger immediate fade-to-black effect
+function triggerFadeToBlack() {
+    const overlay = document.createElement('div');
+    overlay.id = 'blackOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = '#0F1729';
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 200ms linear'; // Extremely fast
+    overlay.style.zIndex = '9999';
+    document.body.appendChild(overlay);
+
+    // Fade to fully black almost immediately
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '.85'; // Fade to black
+    });
+
+    // Hold full black for 1s
+    setTimeout(() => {
+        document.body.removeChild(overlay);
+    }, 500);
+}
+
+// Detect clicks on clickable elements
+document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target.closest('button, a, .clickable')) {
+        triggerFadeToBlack();
+    }
+});
+
+// Also fade to black when unloading (reload, new tab, etc.)
+window.addEventListener('beforeunload', (event) => {
+    triggerFadeToBlack();
+});
+
     const creditScoreBoxClass = "risk-credit-box";
 
     // Helper function to linearly interpolate between two colors
@@ -22,6 +63,11 @@ function getTextColor(score) {
         return lerpColorRGB([255, 130, 130], [200, 130, 255], t); // brighter soft red → brighter soft purple
     }
 }
+
+
+
+// Append the style to the <head> of the document to apply it immediately
+document.documentElement.appendChild(style);
 
     // Function to fetch credit score using the API
     async function fetchCreditScore(username) {

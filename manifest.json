@@ -24,8 +24,8 @@
   "content_scripts": [
     {
       "matches": ["https://manifold.markets/*"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
+      "js": ["content.js"], 
+      "run_at": "document_idle" 
     }
   ],
   "background": {
