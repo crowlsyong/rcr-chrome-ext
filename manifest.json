@@ -1,0 +1,23 @@
+{
+  "name": "RISK Tools",
+  "description": "Official RISK Credit Score Extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "/images/raccoon.png"
+  },
+  "permissions": [
+    "storage"  
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://manifold.markets/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js" 
+  }
+}
