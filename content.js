@@ -80,7 +80,7 @@
             const urlParts = window.location.pathname.split("/");
             const username = urlParts[urlParts.length - 1]; // Get the last part of the URL as username
 
-            if (!username || username.length < 3) {
+            if (!username || username.length < 1) {
                 console.warn("RISK Tools: Invalid username");
                 return;
             }
@@ -133,10 +133,6 @@
         if (request.message === 'urlChanged') {
             console.log('New URL: ' + request.url); // URL passed from background.js
             // You can now inject your content or handle other actions here
-            // For example, inject a class or show a message based on the URL:
-            if (request.url.includes('example.com')) {
-                document.body.classList.add('example-class'); // Inject custom styling or logic
-            }
 
             // Remove the existing credit score box
             removeCreditScoreBox();
@@ -153,9 +149,9 @@
                         } catch (error) {
                             console.error("RISK Tools: Failed to inject credit score box on second attempt. Stopping...");
                         }
-                    }, 1000); // Retry after 1 second
+                    }, 1500); // Retry after 1 second
                 }
-            }, 1000); // Wait 1 second before attempting to reinject
+            }, 1500); // Wait 1.5 second before attempting to reinject!
         }
     });
 
