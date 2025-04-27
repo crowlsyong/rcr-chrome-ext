@@ -1,53 +1,6 @@
 (function () {
 
     // content.js
-// Function to trigger immediate fade-to-black effect
-function triggerFadeToBlack() {
-    const overlay = document.createElement('div');
-    overlay.id = 'blackOverlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = '#0F1729';
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity 200ms linear'; // Extremely fast
-    overlay.style.zIndex = '9999';
-    document.body.appendChild(overlay);
-
-    // Fade to fully black almost immediately
-    requestAnimationFrame(() => {
-        overlay.style.opacity = '.85'; // Fade to black
-    });
-
-    // Hold full black for 1s
-    setTimeout(() => {
-        try {
-            if (popup && popup.parentNode) {
-                popup.parentNode.removeChild(popup);
-            }
-        } catch (err) {
-            console.error("Failed to remove popup:", err);
-        }
-    }, 500);
-    
-    
-    
-}
-
-// Detect clicks on clickable elements
-document.addEventListener('click', (event) => {
-    const target = event.target;
-    if (target.closest('button, a, .clickable')) {
-        triggerFadeToBlack();
-    }
-});
-
-// Also fade to black when unloading (reload, new tab, etc.)
-window.addEventListener('beforeunload', (event) => {
-    triggerFadeToBlack();
-});
 
     const creditScoreBoxClass = "risk-credit-box";
 
@@ -242,16 +195,42 @@ function getTextColor(score) {
             
             
             // Find all the existing boxes inside the row
-            const boxes = container.querySelectorAll(".group.cursor-pointer");
+            console.log("RISK Tools: Attempting to inject credit score box...");
 
-            // Check if there are at least 3 boxes (since we want to add after the third one)
-            if (boxes.length >= 3) {
-                // Insert the new box as the 4th item in the row (after the 3rd box)
-                boxes[2].insertAdjacentElement('afterend', newBox);
-                console.log("RISK Tools: Credit Score Box injected after the third item.");
-            } else {
-                console.warn("RISK Tools: Not enough boxes found, retrying...");
-            }
+            chrome.storage.local.get('creditScoreState', async function (result) {
+                const creditScoreState = result.creditScoreState;
+                console.log('Credit score state is:', creditScoreState);  // Debug log
+            
+                // If toggle is off, do not inject the box
+                if (!creditScoreState) {
+                    console.log("RISK Tools: Credit score box injection is disabled.");
+                    return;
+                }
+            
+                const container = getContainerElement();
+                if (!container) {
+                    console.warn("RISK Tools: Container element not found, retrying...");
+                    return;
+                }
+            
+                // Ensure credit score box isn't already added
+                if (document.querySelector(`.${creditScoreBoxClass}`)) {
+                    console.log("RISK Tools: Credit Score Box already injected, skipping.");
+                    return;
+                }
+            
+                const boxes = container.querySelectorAll(".group.cursor-pointer");
+                console.log(`RISK Tools: Found ${boxes.length} boxes in the container.`);
+            
+                if (boxes.length === 3) {
+                    // Inject the new box after the 3rd box
+                    boxes[2].insertAdjacentElement('afterend', newBox);
+                    console.log("RISK Tools: Credit Score Box injected after the third item.");
+                } else {
+                    console.log("RISK Tools: Skipping injection, found more than 3 boxes.");
+                }
+            });
+            
         });
     }
 
