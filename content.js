@@ -23,8 +23,17 @@ function triggerFadeToBlack() {
 
     // Hold full black for 1s
     setTimeout(() => {
-        document.body.removeChild(overlay);
+        try {
+            if (popup && popup.parentNode) {
+                popup.parentNode.removeChild(popup);
+            }
+        } catch (err) {
+            console.error("Failed to remove popup:", err);
+        }
     }, 500);
+    
+    
+    
 }
 
 // Detect clicks on clickable elements
@@ -65,9 +74,6 @@ function getTextColor(score) {
 }
 
 
-
-// Append the style to the <head> of the document to apply it immediately
-document.documentElement.appendChild(style);
 
     // Function to fetch credit score using the API
     async function fetchCreditScore(username) {
