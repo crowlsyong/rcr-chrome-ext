@@ -2,26 +2,26 @@
     const creditScoreBoxClass = "risk-credit-box";
 
     // Helper function to linearly interpolate between two colors
-    function lerpColorRGB(color1, color2, t) {
-        const r = Math.round(color1[0] + t * (color2[0] - color1[0]));
-        const g = Math.round(color1[1] + t * (color2[1] - color1[1]));
-        const b = Math.round(color1[2] + t * (color2[2] - color1[2]));
-        return `rgb(${r}, ${g}, ${b})`;
-    }
+function lerpColorRGB(color1, color2, t) {
+    const r = Math.round(color1[0] + t * (color2[0] - color1[0]));
+    const g = Math.round(color1[1] + t * (color2[1] - color1[1]));
+    const b = Math.round(color1[2] + t * (color2[2] - color1[2]));
+    return `rgb(${r}, ${g}, ${b})`;
+}
 
-    // Function to get the text color based on the score
-    function getTextColor(score) {
-        if (score >= 800) {
-            const t = (score - 800) / 200; // 800 → 1000
-            return lerpColorRGB([100, 100, 255], [96, 225, 105], t); // soft purple → soft green
-        } else if (score >= 600) {
-            const t = (score - 600) / 200; // 600 → 800
-            return lerpColorRGB([50, 150, 200], [100, 100, 255], t); // soft blue → soft purple
-        } else {
-            const t = score / 600; // 0 → 600
-            return lerpColorRGB([255, 100, 100], [180, 100, 255], t); // soft red → soft purple
-        }
+// Function to get the text color based on the score
+function getTextColor(score) {
+    if (score >= 800) {
+        const t = (score - 800) / 200; // 800 → 1000
+        return lerpColorRGB([130, 130, 255], [130, 255, 160], t); // brighter soft purple → brighter soft green
+    } else if (score >= 600) {
+        const t = (score - 600) / 200; // 600 → 800
+        return lerpColorRGB([100, 200, 255], [130, 130, 255], t); // brighter soft blue → brighter soft purple
+    } else {
+        const t = score / 600; // 0 → 600
+        return lerpColorRGB([255, 130, 130], [200, 130, 255], t); // brighter soft red → brighter soft purple
     }
+}
 
     // Function to fetch credit score using the API
     async function fetchCreditScore(username) {
@@ -93,7 +93,13 @@
             // Create the new credit score box
             const newBox = document.createElement("div");
             newBox.className = "group cursor-pointer select-none rounded px-2 py-1 transition-colors opacity-[0.75] hover:opacity-100 bg-canvas-50 text-ink-1000 risk-credit-box";
-
+            newBox.addEventListener("click", function (e) {
+                // Optional: make sure they didn't click inside the popup by accident
+                if (e.target.closest("button")) return; // Ignore clicks on buttons (like the 'X')
+            
+                window.open(`https://manifold.markets/news/risk`, "_blank");
+                // window.open(`https://risk.deno.dev/user/${username}`, "_blank"); // Open in a new tab
+            });
             // Get the text color based on the credit score
             const scoreColor = getTextColor(creditScore);
 
@@ -107,60 +113,67 @@
                 </div>
             `;
             newBox.addEventListener("mouseenter", function () {
-                // Get the position of the newBox relative to the document
                 const rect = newBox.getBoundingClientRect();
-                
-                // Create the popup container
+            
                 const popup = document.createElement("div");
-                popup.style.position = "absolute"; // Absolute position relative to the document
-                popup.style.top = `${rect.top + window.scrollY - 60}px`; // Position it 5px below the top of the newBox
-                popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 5}px`; // 5px to the right of the newBox
+                popup.style.position = "absolute";
+                popup.style.top = `${rect.top + window.scrollY - 60}px`;
+                popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 5}px`;
                 popup.style.backgroundColor = "#0F1729";
                 popup.style.borderRadius = "10px";
-                popup.style.border = "2px solid #222c3f"; // Slightly blue border
+                popup.style.border = "2px solid #222c3f";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
-                popup.style.padding = "16px"; // 16px padding
-                popup.style.zIndex = "1000"; // Make sure it's on top
-                
-                // Create the iframe
+                popup.style.padding = "16px";
+                popup.style.zIndex = "1000";
+            
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/user/${username}`;
-                iframe.style.width = "448px"; // Set width
-                iframe.style.height = "288px"; // Set height
-                iframe.style.border = "none"; 
+                iframe.style.width = "448px";
+                iframe.style.height = "288px";
+                iframe.style.border = "none";
                 iframe.style.overflow = "hidden";
-                iframe.style.backgroundColor = "#0F1729"; // Dark blue background
-                iframe.style.transition = "height 0.3s ease";
-                
-                // Create the close button (X)
-                const closeButton = document.createElement("button");
-                closeButton.textContent = "X";
-                closeButton.style.position = "absolute";
-                closeButton.style.top = "5px";
-                closeButton.style.right = "5px";
-                closeButton.style.background = "0,0,0,0"; // Transparent background
-                closeButton.style.color = "white";
-                closeButton.style.border = "none";
-                closeButton.style.borderRadius = "10%";
-                closeButton.style.padding = "5px 5px";
-                closeButton.style.cursor = "pointer";
-                closeButton.style.fontSize = "8px";
-                closeButton.addEventListener("click", function () {
-                    document.body.removeChild(popup); // Close the popup when X is clicked
-                });
-                
-                // Append iframe and close button to the popup
+                iframe.style.backgroundColor = "#0F1729";
+
+
                 popup.appendChild(iframe);
-                popup.appendChild(closeButton);
-                
-                // Append the popup to the body
                 document.body.appendChild(popup);
             
-                // Close the popup when the mouse leaves the newBox
-                newBox.addEventListener("mouseleave", function () {
-                    document.body.removeChild(popup); // Remove the popup
-                }, { once: true }); // Ensure the event listener only runs once
+                let isOverBoxOrPopup = true;
+            
+                function checkLeave() {
+                    if (!isOverBoxOrPopup) {
+                        document.body.removeChild(popup);
+                        newBox.removeEventListener("mouseleave", onBoxLeave);
+                        popup.removeEventListener("mouseleave", onPopupLeave);
+                        popup.removeEventListener("mouseenter", onPopupEnter);
+                        newBox.removeEventListener("mouseenter", onBoxEnter);
+                    }
+                }
+            
+                function onBoxLeave() {
+                    isOverBoxOrPopup = false;
+                    setTimeout(checkLeave,50); // small delay to allow entering popup
+                }
+            
+                function onPopupLeave() {
+                    isOverBoxOrPopup = false;
+                    setTimeout(checkLeave, 50);
+                }
+            
+                function onBoxEnter() {
+                    isOverBoxOrPopup = true;
+                }
+            
+                function onPopupEnter() {
+                    isOverBoxOrPopup = true;
+                }
+            
+                newBox.addEventListener("mouseleave", onBoxLeave);
+                popup.addEventListener("mouseleave", onPopupLeave);
+                popup.addEventListener("mouseenter", onPopupEnter);
+                newBox.addEventListener("mouseenter", onBoxEnter);
             });
+            
             
             
             
