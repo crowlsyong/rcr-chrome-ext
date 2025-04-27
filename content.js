@@ -44,6 +44,15 @@
         return container;
     }
 
+    // Function to remove the existing credit score box
+    function removeCreditScoreBox() {
+        const existingBox = document.querySelector(`.${creditScoreBoxClass}`);
+        if (existingBox) {
+            existingBox.remove();
+            console.log("RISK Tools: Credit Score Box removed.");
+        }
+    }
+
     // Function to add the credit score box
     async function addCreditScoreBox() {
         chrome.storage.local.get('creditScoreState', async function (result) {
@@ -118,4 +127,36 @@
             addCreditScoreBox();
         }
     });
+
+    // Listen for URL changes from background.js
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        if (request.message === 'urlChanged') {
+            console.log('New URL: ' + request.url); // URL passed from background.js
+            // You can now inject your content or handle other actions here
+            // For example, inject a class or show a message based on the URL:
+            if (request.url.includes('example.com')) {
+                document.body.classList.add('example-class'); // Inject custom styling or logic
+            }
+
+            // Remove the existing credit score box
+            removeCreditScoreBox();
+
+            // Wait 1 second before trying to re-inject the credit score box
+            setTimeout(async () => {
+                try {
+                    await addCreditScoreBox();
+                } catch (error) {
+                    console.error("RISK Tools: Failed to inject credit score box on first attempt. Retrying...");
+                    setTimeout(async () => {
+                        try {
+                            await addCreditScoreBox();
+                        } catch (error) {
+                            console.error("RISK Tools: Failed to inject credit score box on second attempt. Stopping...");
+                        }
+                    }, 1000); // Retry after 1 second
+                }
+            }, 1000); // Wait 1 second before attempting to reinject
+        }
+    });
+
 })();

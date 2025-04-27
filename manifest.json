@@ -8,7 +8,18 @@
     "default_icon": "/images/raccoon.png"
   },
   "permissions": [
-    "storage"  
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation",
+    "alarms",
+    "contextMenus",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "declarativeNetRequestWithHostAccess"
   ],
   "content_scripts": [
     {
