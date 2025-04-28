@@ -72,7 +72,7 @@ function getTextColor(score) {
 
             const container = getContainerElement();
             if (!container) {
-                console.warn("RISK Tools: Container element not found, retrying...");
+                console.log("RISK Tools: Container element not found, retrying...");
                 return;
             }
 
