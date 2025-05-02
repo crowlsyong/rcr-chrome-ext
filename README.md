@@ -7,7 +7,9 @@
 - Click extension in the top right, toggle it ON. 
 - The page will refresh and- hopefully- you will see the RISK Credit Score appear. 
 
-The `trash` folder is exactly what it sounds like- trash. It's just some code to quickly test stuff. That folder will not be in the production verison of this extension. 
+## Notes
+- The `trash` folder is exactly what it sounds like- trash. It's just some code to quickly test stuff. That folder will not be in the production verison of this extension. 
+- The options.html is a work-in-progress. The toggles don't do anything (yet).
 
 ## Have fun! 
 
