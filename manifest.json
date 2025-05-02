@@ -1,6 +1,7 @@
 {
-  "name": "RISK Tools",
-  "description": "Official RISK Credit Score Extension",
+  "name": "RISK Credit Score",
+  "description": "Official RISK Credit Score Extension For Manifold Markets",
+  "author": "crowlsyong",
   "version": "1.0",
   "manifest_version": 3,
   "icons": {
