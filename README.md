@@ -1,7 +1,7 @@
 # Risk Credit Report Chrome Extension
 ## Get started
-- Open chrome. In the URL, enter: `chrome://extensions` and turn developer mode on in the top right. 
-- Add the folder which contains all of these files.
+- Open chrome. In the URL, enter: `chrome://extensions` and turn Developer mode **on** in the top right. 
+- In the top left of that page, click **Load unpacked** and add the folder which contains all of these files.
 - (optional) Pin the chrome extension by clicking the puzzle piece in the top right, find Risk Credit Score extension, click the pin icon.
 - Visit https://manifold.markets/ian
 - Click extension in the top right, toggle it ON. 
