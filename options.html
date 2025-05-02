@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,10 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0F1729; /* Dark theme background */
-      color: #E0E0E0; /* Light text color for contrast */
+      background-color: #0F1729;
+      /* Dark theme background */
+      color: #E0E0E0;
+      /* Light text color for contrast */
       margin: 0;
       padding: 0;
       display: flex;
@@ -16,42 +19,53 @@
       align-items: center;
       height: 100vh;
     }
+
     div {
       width: 100%;
-      max-width: 350px; /* Narrower layout */
+      max-width: 350px;
+      /* Narrower layout */
       padding: 20px;
       box-sizing: border-box;
-      background-color: #1E293B; /* Slightly lighter background for the options page */
+      background-color: #1E293B;
+      /* Slightly lighter background for the options page */
       border-radius: 8px;
     }
+
     h1 {
       font-size: 1.5rem;
       color: #6366F1;
       margin-bottom: 20px;
       text-align: center;
     }
+
     .toggle-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
+
     .toggle-container label {
       font-size: 1rem;
       color: #E0E0E0;
     }
+
     .toggle-container input {
       width: 40px;
       height: 20px;
       border-radius: 10px;
-      background-color: #2e3d4f; /* Dark color for off position */
+      background-color: #2e3d4f;
+      /* Dark color for off position */
       appearance: none;
       cursor: pointer;
       position: relative;
     }
+
     .toggle-container input:checked {
-      background-color: #4A90E2; /* Blue color for on position */
+      background-color: #4A90E2;
+      /* Blue color for on position */
     }
+
     .toggle-container input:before {
       content: '';
       position: absolute;
@@ -63,9 +77,11 @@
       background-color: #fff;
       transition: left 0.3s ease;
     }
+
     .toggle-container input:checked:before {
       left: 22px;
     }
+
     .button {
       display: block;
       width: 90%;
@@ -79,24 +95,37 @@
       text-align: center;
       transition: background-color 0.2s ease;
     }
+
     .button:hover {
       background-color: #4A90E2;
     }
+
     .logo {
-        width: auto;  /* Maintain the aspect ratio */
-        height: 60px; /* Keep the height as you set */
-        border-radius: 5px;  /* Make the image edges rounded */
-        display: block;  /* Makes the image behave as a block element */
-        margin: 0 auto;  /* Centers the image horizontally */
+      width: auto;
+      /* Maintain the aspect ratio */
+      height: 60px;
+      /* Keep the height as you set */
+      border-radius: 5px;
+      /* Make the image edges rounded */
+      display: block;
+      /* Makes the image behave as a block element */
+      margin: 0 auto;
+      /* Centers the image horizontally */
     }
   </style>
 </head>
+
 <body>
   <div>
     <img src="./images/risk-logo-mini.png" height="60px" alt="RISK Logo" class="logo">
     <h1>Options</h1>
 
     <!-- Dark Mode Toggle -->
+    <div class="toggle-container">
+      <label for="dark-mode-toggle">Dark Mode</label>
+      <input type="checkbox" id="dark-mode-toggle">
+    </div>
+    <!-- Fix White Flash Toggle -->
     <div class="toggle-container">
       <label for="dark-mode-toggle">Fix white flash</label>
       <p>NOT WORKING </p>
@@ -108,4 +137,5 @@
 
   <script src="options.js"></script>
 </body>
+
 </html>

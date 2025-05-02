@@ -28,11 +28,11 @@ function applyDarkMode() {
         document.documentElement.setAttribute('data-theme', 'dark');
     }
 }
-  
+
 // Function to remove dark mode styles
 function removeDarkMode() {
     console.log('Removing dark mode...');
-  
+
     // Check if we're on manifold.markets before removing styles
     if (window.location.hostname === 'manifold.markets') {
         const style = document.createElement('style');
@@ -61,7 +61,7 @@ chrome.storage.local.get('darkMode', (result) => {
     if (result.hasOwnProperty('darkMode')) {
         const toggle = document.getElementById('dark-mode-toggle');
         toggle.checked = result.darkMode;
-  
+
         // Apply the corresponding theme immediately when page loads
         if (result.darkMode) {
             applyDarkMode();
@@ -77,11 +77,11 @@ chrome.storage.local.get('darkMode', (result) => {
 document.getElementById('dark-mode-toggle').addEventListener('change', (event) => {
     const darkModeState = event.target.checked;
     console.log('Dark mode state changed:', darkModeState);
-  
+
     // Save the state to chrome storage
     chrome.storage.local.set({ darkMode: darkModeState }, () => {
         console.log('Dark mode preference saved:', darkModeState);
-  
+
         // Apply the dark mode setting immediately
         if (darkModeState) {
             applyDarkMode();

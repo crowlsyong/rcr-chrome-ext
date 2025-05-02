@@ -5,26 +5,26 @@
     const creditScoreBoxClass = "risk-credit-box";
 
     // Helper function to linearly interpolate between two colors
-function lerpColorRGB(color1, color2, t) {
-    const r = Math.round(color1[0] + t * (color2[0] - color1[0]));
-    const g = Math.round(color1[1] + t * (color2[1] - color1[1]));
-    const b = Math.round(color1[2] + t * (color2[2] - color1[2]));
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-// Function to get the text color based on the score
-function getTextColor(score) {
-    if (score >= 800) {
-        const t = (score - 800) / 200; // 800 → 1000
-        return lerpColorRGB([130, 130, 255], [130, 255, 160], t); // brighter soft purple → brighter soft green
-    } else if (score >= 600) {
-        const t = (score - 600) / 200; // 600 → 800
-        return lerpColorRGB([100, 200, 255], [130, 130, 255], t); // brighter soft blue → brighter soft purple
-    } else {
-        const t = score / 600; // 0 → 600
-        return lerpColorRGB([255, 130, 130], [200, 130, 255], t); // brighter soft red → brighter soft purple
+    function lerpColorRGB(color1, color2, t) {
+        const r = Math.round(color1[0] + t * (color2[0] - color1[0]));
+        const g = Math.round(color1[1] + t * (color2[1] - color1[1]));
+        const b = Math.round(color1[2] + t * (color2[2] - color1[2]));
+        return `rgb(${r}, ${g}, ${b})`;
     }
-}
+
+    // Function to get the text color based on the score
+    function getTextColor(score) {
+        if (score >= 800) {
+            const t = (score - 800) / 200; // 800 → 1000
+            return lerpColorRGB([130, 130, 255], [130, 255, 160], t); // brighter soft purple → brighter soft green
+        } else if (score >= 600) {
+            const t = (score - 600) / 200; // 600 → 800
+            return lerpColorRGB([100, 200, 255], [130, 130, 255], t); // brighter soft blue → brighter soft purple
+        } else {
+            const t = score / 600; // 0 → 600
+            return lerpColorRGB([255, 130, 130], [200, 130, 255], t); // brighter soft red → brighter soft purple
+        }
+    }
 
 
 
@@ -101,7 +101,7 @@ function getTextColor(score) {
             newBox.addEventListener("click", function (e) {
                 // Optional: make sure they didn't click inside the popup by accident
                 if (e.target.closest("button")) return; // Ignore clicks on buttons (like the 'X')
-            
+
                 window.open(`https://manifold.markets/news/risk`, "_blank");
                 // window.open(`https://risk.deno.dev/ext/${username}`, "_blank"); // Open in a new tab
             });
@@ -119,7 +119,7 @@ function getTextColor(score) {
             `;
             newBox.addEventListener("mouseenter", function () {
                 const rect = newBox.getBoundingClientRect();
-            
+
                 // Create popup element
                 const popup = document.createElement("div");
                 popup.style.position = "absolute";
@@ -133,7 +133,7 @@ function getTextColor(score) {
                 popup.style.zIndex = "1000";
                 popup.style.opacity = "0";  // Initial opacity for popup
                 popup.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for popup
-            
+
                 // Create iframe element
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/ext/${username}`;
@@ -144,19 +144,19 @@ function getTextColor(score) {
                 iframe.style.backgroundColor = "#0F1729";
                 iframe.style.opacity = "0";  // Initial opacity for iframe
                 iframe.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for iframe
-            
+
                 // Append iframe to popup and popup to body
                 popup.appendChild(iframe);
                 document.body.appendChild(popup);
-            
+
                 // Trigger fade-in for both popup and iframe
                 setTimeout(() => {
                     popup.style.opacity = "1";  // Fade-in the popup
                     iframe.style.opacity = "1";  // Fade-in the iframe
                 }, 10);  // Small delay to ensure transition works
-            
+
                 let isOverBoxOrPopup = true;
-            
+
                 function checkLeave() {
                     if (!isOverBoxOrPopup) {
                         document.body.removeChild(popup);
@@ -166,62 +166,62 @@ function getTextColor(score) {
                         newBox.removeEventListener("mouseenter", onBoxEnter);
                     }
                 }
-            
+
                 function onBoxLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave,50); // small delay to allow entering popup
+                    setTimeout(checkLeave, 50); // small delay to allow entering popup
                 }
-            
+
                 function onPopupLeave() {
                     isOverBoxOrPopup = false;
                     setTimeout(checkLeave, 50);
                 }
-            
+
                 function onBoxEnter() {
                     isOverBoxOrPopup = true;
                 }
-            
+
                 function onPopupEnter() {
                     isOverBoxOrPopup = true;
                 }
-            
+
                 newBox.addEventListener("mouseleave", onBoxLeave);
                 popup.addEventListener("mouseleave", onPopupLeave);
                 popup.addEventListener("mouseenter", onPopupEnter);
                 newBox.addEventListener("mouseenter", onBoxEnter);
             });
-            
-            
-            
-            
+
+
+
+
             // Find all the existing boxes inside the row
             console.log("RISK Tools: Attempting to inject credit score box...");
 
             chrome.storage.local.get('creditScoreState', async function (result) {
                 const creditScoreState = result.creditScoreState;
                 console.log('Credit score state is:', creditScoreState);  // Debug log
-            
+
                 // If toggle is off, do not inject the box
                 if (!creditScoreState) {
                     console.log("RISK Tools: Credit score box injection is disabled.");
                     return;
                 }
-            
+
                 const container = getContainerElement();
                 if (!container) {
                     console.warn("RISK Tools: Container element not found, retrying...");
                     return;
                 }
-            
+
                 // Ensure credit score box isn't already added
                 if (document.querySelector(`.${creditScoreBoxClass}`)) {
                     console.log("RISK Tools: Credit Score Box already injected, skipping.");
                     return;
                 }
-            
+
                 const boxes = container.querySelectorAll(".group.cursor-pointer");
                 console.log(`RISK Tools: Found ${boxes.length} boxes in the container.`);
-            
+
                 if (boxes.length === 3) {
                     // Inject the new box after the 3rd box
                     boxes[2].insertAdjacentElement('afterend', newBox);
@@ -230,19 +230,19 @@ function getTextColor(score) {
                     console.log("RISK Tools: Skipping injection, found more than 3 boxes.");
                 }
             });
-            
+
         });
     }
 
     // Initially check the state and act accordingly
-    chrome.storage.local.get('creditScoreState', function(result) {
+    chrome.storage.local.get('creditScoreState', function (result) {
         if (result.creditScoreState) {
             addCreditScoreBox();
         }
     });
 
     // Listen for URL changes from background.js
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.message === 'urlChanged') {
             console.log('New URL: ' + request.url); // URL passed from background.js
             // You can now inject your content or handle other actions here
