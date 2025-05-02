@@ -39,11 +39,13 @@
     }
 
     .toggle-container {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 3fr 2fr 1fr;
       align-items: center;
-      margin-bottom: 20px;
+      padding: 10px 0;
+      border-bottom: 1px solid #2e3d4f;
     }
+
 
     .toggle-container label {
       font-size: 1rem;
@@ -94,6 +96,7 @@
       text-decoration: none;
       text-align: center;
       transition: background-color 0.2s ease;
+      margin-top: 20px;
     }
 
     .button:hover {
@@ -123,19 +126,20 @@
     <!-- Dark Mode Toggle -->
     <div class="toggle-container">
       <label for="dark-mode-toggle">Dark Mode</label>
+      <p>NOT WORKING </p>
       <input type="checkbox" id="dark-mode-toggle">
     </div>
+
     <!-- Fix White Flash Toggle -->
     <div class="toggle-container">
       <label for="dark-mode-toggle">Fix white flash</label>
       <p>NOT WORKING </p>
       <input type="checkbox" id="dark-mode-toggle">
     </div>
-
-    <a href="index.html" class="button">Back to Popup</a>
+    
+    <!-- Wanted to put a button here. Silly idea i think.. -->
+    <!-- <a href="index.html" class="button">Back to Popup</a> -->
   </div>
-
   <script src="options.js"></script>
 </body>
-
 </html>
