@@ -125,20 +125,22 @@
                 popup.style.position = "absolute";
                 popup.style.top = `${rect.top + window.scrollY - 60}px`;
                 popup.style.left = `${rect.left + window.scrollX + newBox.offsetWidth + 10}px`;
+                popup.style.display = "flex";
+                popup.style.flexDirection = "column";
+                popup.style.justifyContent = "center";
+                popup.style.alignItems = "center";
                 popup.style.backgroundColor = "#0F1729";
                 popup.style.borderRadius = "10px";
-                popup.style.border = "2px solid #222c3f";
-                popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
-                popup.style.padding = "16px";
+                popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
                 popup.style.zIndex = "1000";
                 popup.style.opacity = "0";  // Initial opacity for popup
-                popup.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for popup
+                popup.style.transition = "opacity 0.3s ease-in";  // Smooth fade-in transition for popup
 
                 // Create iframe element
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/ext/${username}`;
-                iframe.style.width = "448px";
-                iframe.style.height = "243px";
+                iframe.style.width = "350px";
+                iframe.style.height = "200px";
                 iframe.style.border = "none";
                 iframe.style.overflow = "hidden";
                 iframe.style.backgroundColor = "#0F1729";
@@ -169,12 +171,12 @@
 
                 function onBoxLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave, 50); // small delay to allow entering popup
+                    setTimeout(checkLeave, 60); // small delay to allow entering popup
                 }
 
                 function onPopupLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave, 50);
+                    setTimeout(checkLeave, 60);
                 }
 
                 function onBoxEnter() {
