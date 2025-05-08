@@ -129,7 +129,8 @@
                 popup.style.flexDirection = "column";
                 popup.style.justifyContent = "center";
                 popup.style.alignItems = "center";
-                popup.style.backgroundColor = "#0F1729";
+                // popup.style.backgroundColor = "#0F1729";
+                popup.style.border = "0px solid";
                 popup.style.borderRadius = "10px";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
                 popup.style.zIndex = "1000";
@@ -140,10 +141,11 @@
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/ext/${username}`;
                 iframe.style.width = "350px";
-                iframe.style.height = "200px";
+                iframe.style.height = "196px";
                 iframe.style.border = "none";
+                iframe.style.borderRadius = "8px";
                 iframe.style.overflow = "hidden";
-                iframe.style.backgroundColor = "#0F1729";
+                // iframe.style.backgroundColor = "#0F1729";
                 iframe.style.opacity = "0";  // Initial opacity for iframe
                 iframe.style.transition = "opacity 0.2s ease-in";  // Smooth fade-in transition for iframe
 
