@@ -141,7 +141,7 @@
                 const iframe = document.createElement("iframe");
                 iframe.src = `https://risk.deno.dev/ext/${username}`;
                 iframe.style.width = "352px";
-                iframe.style.height = "196px";
+                iframe.style.height = "163px";
                 iframe.style.border = "none";
                 iframe.style.borderRadius = "8px";
                 iframe.style.overflow = "hidden";
