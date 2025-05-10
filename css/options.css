@@ -1,0 +1,109 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0F1729;
+    /* Dark theme background */
+    color: #E0E0E0;
+    /* Light text color for contrast */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+div {
+    width: 100%;
+    max-width: 350px;
+    /* Narrower layout */
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #1E293B;
+    /* Slightly lighter background for the options page */
+    border-radius: 8px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: #6366F1;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.toggle-container {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1fr;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #2e3d4f;
+}
+
+
+.toggle-container label {
+    font-size: 1rem;
+    color: #E0E0E0;
+}
+
+.toggle-container input {
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #2e3d4f;
+    /* Dark color for off position */
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.toggle-container input:checked {
+    background-color: #4A90E2;
+    /* Blue color for on position */
+}
+
+.toggle-container input:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: left 0.3s ease;
+}
+
+.toggle-container input:checked:before {
+    left: 22px;
+}
+
+.button {
+    display: block;
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #FFFFFF;
+    background-color: #6366F1;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    margin-top: 20px;
+}
+
+.button:hover {
+    background-color: #4A90E2;
+}
+
+.logo {
+    width: auto;
+    /* Maintain the aspect ratio */
+    height: 60px;
+    /* Keep the height as you set */
+    border-radius: 5px;
+    /* Make the image edges rounded */
+    display: block;
+    /* Makes the image behave as a block element */
+    margin: 0 auto;
+    /* Centers the image horizontally */
+}
