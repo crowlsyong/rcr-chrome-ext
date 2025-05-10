@@ -2,7 +2,7 @@
   "name": "RISK Credit Score",
   "description": "Official RISK Credit Score Extension For Manifold Markets",
   "author": "crowlsyong",
-  "version": "1.0",
+  "version": "0.2.0.0",
   "manifest_version": 3,
   "icons": {
     "16": "icons/raccoon-16.png",
@@ -37,7 +37,7 @@
   "content_scripts": [
     {
       "matches": ["https://manifold.markets/*"],
-      "js": ["content.js"],
+      "js": ["content.js", "card.js"],
       "run_at": "document_idle"
     }
   ],

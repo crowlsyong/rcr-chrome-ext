@@ -1,0 +1,108 @@
+// card.js
+
+// Expose a global object to hold our card functions
+window.RISKToolsCard = {};
+
+// Helper function to linearly interpolate between two colors
+function lerpColor(color1, color2, t) {
+  const r = Math.round(color1[0] + (color2[0] - color1[0]) * t);
+  const g = Math.round(color1[1] + (color2[1] - color1[1]) * t);
+  const b = Math.round(color1[2] + (color2[2] - color1[2]) * t);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+// Function to get the risk level text based on the score
+function getRiskLevelText(score) {
+  if (score < 100) return "Outrageously Dangerous";
+  if (score < 200) return "Extremely Risky";
+  if (score < 300) return "Highly Risky";
+  if (score < 400) return "Risky";
+  if (score < 500) return "A Bit Risky";
+  if (score < 600) return "Moderately Safe";
+  if (score < 700) return "Safe";
+  if (score < 800) return "Very Safe";
+  if (score < 900) return "Super Safe";
+  return "Extremely Safe";
+}
+
+// Function to get the color based on the score
+function getScoreColor(score) {
+  if (score >= 900) {
+    const t = (score - 900) / 100; // 900 -> 1000
+    return lerpColor([54, 186, 63], [96, 225, 105], t); // Greenish to brighter greenish
+  } else if (score >= 800) {
+    const t = (score - 800) / 100; // 800 -> 900
+    return lerpColor([100, 100, 255], [54, 186, 63], t); // Bluish to greenish
+  } else if (score >= 600) {
+    const t = (score - 600) / 200; // 600 -> 800
+    return lerpColor([50, 150, 200], [100, 100, 255], t); // Cyan to bluish
+  } else {
+    const t = score / 600; // 0 -> 600
+    return lerpColor([255, 100, 100], [180, 100, 255], t); // Reddish to purplish
+  }
+}
+
+// card.js (updated createRiskCardHTML)
+
+window.RISKToolsCard.createRiskCardHTML = async function (username) {
+  try {
+    const response = await fetch(`https://risk.markets/api/score?username=${username}`);
+    if (!response.ok) {
+      console.error(`Failed to fetch user data for ${username}`);
+      return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">Error fetching data for ${username}.</div>`;
+    }
+    const userData = await response.json();
+
+    // *** Adjusted data check to explicitly check for null/undefined ***
+    if (!userData || userData.creditScore === null || typeof userData.creditScore === 'undefined' || !userData.avatarUrl || typeof userData.riskMultiplier === 'undefined' || userData.userExists === false) {
+        console.error(`Incomplete or invalid user data for ${username}`, userData);
+        let errorMessage = `Incomplete data for ${username}.`;
+        if (userData && userData.userExists === false) {
+             errorMessage = `User ${username} not found on RISK Markets.`;
+        } else if (userData && (userData.creditScore === null || typeof userData.creditScore === 'undefined')) {
+            errorMessage = `Credit score not available for ${username}.`;
+        }
+        return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">${errorMessage}</div>`;
+    }
+
+    const creditScore = userData.creditScore; // This will now be 0 for Tumbles
+    const avatarUrl = userData.avatarUrl;
+    const riskMultiplier = userData.riskMultiplier;
+    const riskLevelText = getRiskLevelText(creditScore);
+    const scoreColor = getScoreColor(creditScore);
+    const riskLevelBackgroundColor = getScoreColor(creditScore);
+
+    const formattedRiskMultiplier = (riskMultiplier * 100).toFixed(0);
+
+    const cardContentHtml = `
+        <a href="https://risk.markets/u/${username}" target="_blank" rel="noopener noreferrer" class="block w-80 p-4 md:p-6 rounded-lg text-white transition-all duration-100 cursor-pointer" style="border: 2px solid ${scoreColor}; background-color: #0F1729;" onmouseover="this.style.backgroundColor='#121c30';" onmouseout="this.style.backgroundColor='#0F1729';">
+            <div class="flex-col items-center">
+                <div class="flex items-center mb-4">
+                    <img src="${avatarUrl}" alt="${username}'s avatar" class="w-12 h-12 rounded-full mr-2">
+                    <div>
+                        <h2 class="text-xl font-semibold">${username}</h2>
+                        <p class="text-xs">Risk Multiplier: ${formattedRiskMultiplier}%</p>
+                    </div>
+                    <div class="flex flex-col mt-2 text-right ml-auto">
+                        <span class="text-xs text-gray-400">Credit Score:</span>
+                        <span class="text-3xl font-bold" style="color: ${scoreColor};">${creditScore}</span>
+                    </div>
+                </div>
+                <div class="mt-3 px-3 py-2 rounded-md relative" style="background-color: ${riskLevelBackgroundColor};">
+                    <div class="absolute inset-0 bg-black opacity-40 rounded-md" aria-hidden="true"></div>
+                    <div class="relative z-10">
+                        <p class="text-xs text-gray-100">Lending to this user is</p>
+                        <p class="text-sm text-white font-semibold">${riskLevelText}</p>
+                    </div>
+                    <svg stroke="currentColor" fill="none" stroke-width="2" class="absolute top-4 right-2 w-5 h-5 text-white" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path><path d="M11 13l9 -9"></path><path d="M15 4h5v5"></path></svg>
+                </div>
+            </div>
+        </a>
+    `;
+    return cardContentHtml;
+
+  } catch (error) {
+    console.error(`Error creating risk card HTML for ${username}:`, error);
+    return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">An error occurred while loading data for ${username}.</div>`;
+  }
+};
