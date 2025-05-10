@@ -31,7 +31,7 @@
     // Function to fetch credit score using the API
     async function fetchCreditScore(username) {
         const response = await fetch(
-            `https://risk.deno.dev/api/score?username=${username}`
+            `https://risk.markets/api/score?username=${username}`
         );
         if (!response.ok) {
             console.error(`Failed to fetch credit score for ${username}`);
@@ -103,7 +103,7 @@
                 if (e.target.closest("button")) return; // Ignore clicks on buttons (like the 'X')
 
                 window.open(`https://manifold.markets/news/risk`, "_blank");
-                // window.open(`https://risk.deno.dev/ext/${username}`, "_blank"); // Open in a new tab
+                // window.open(`https://risk.markets/ext/${username}`, "_blank"); // Open in a new tab
             });
             // Get the text color based on the credit score
             const scoreColor = getTextColor(creditScore);
@@ -139,7 +139,7 @@
 
                 // Create iframe element
                 const iframe = document.createElement("iframe");
-                iframe.src = `https://risk.deno.dev/ext/${username}`;
+                iframe.src = `https://risk.markets/ext/${username}`;
                 iframe.style.width = "352px";
                 iframe.style.height = "163px";
                 iframe.style.border = "none";

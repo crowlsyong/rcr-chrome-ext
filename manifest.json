@@ -30,6 +30,10 @@
     "declarativeNetRequestFeedback",
     "declarativeNetRequestWithHostAccess"
   ],
+  "host_permissions": [
+    "https://manifold.markets/",
+    "https://risk.markets/*"
+  ],
   "content_scripts": [
     {
       "matches": ["https://manifold.markets/*"],

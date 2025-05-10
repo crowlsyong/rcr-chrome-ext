@@ -12,5 +12,4 @@
 - The options.html is a work-in-progress. The toggles don't do anything (yet).
 
 ## Have fun! 
-
 Please report bugs if you find them. Feel free to use github to contribute.
