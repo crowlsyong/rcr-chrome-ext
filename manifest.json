@@ -2,7 +2,7 @@
   "name": "RISK Credit Score",
   "description": "Official RISK Credit Score Extension For Manifold Markets",
   "author": "crowlsyong",
-  "version": "0.2.1.0",
+  "version": "0.2.1.1",
   "manifest_version": 3,
   "icons": {
     "16": "icons/raccoon-16.png",
