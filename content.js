@@ -4,11 +4,14 @@ window.RISKToolsCard = {};
 
     const creditScoreBoxClass = "risk-credit-box";
     const riskCardPopupClass = "risk-card-popup"; // Class for the popup container
+    const targetContainerSelector = ".bg-canvas-0.w-full.rounded-lg.p-4.flex.flex-col > .flex.flex-col > .mt-2.gap-2.flex.flex-row"; // Selector for the container
+    let observer = null; // To hold our MutationObserver instance
+    let isInjecting = false; // Flag to prevent multiple simultaneous injections
 
     // Helper function to linearly interpolate between two colors
     function lerpColorRGB(color1, color2, t) {
         const r = Math.round(color1[0] + t * (color2[0] - color1[0]));
-        const g = Math.round(color1[1] + t * (color2[2] - color1[2]));
+        const g = Math.round(color1[1] + t * (color2[1] - color1[1])); // Fixed typo here
         const b = Math.round(color1[2] + t * (color2[2] - color1[2]));
         return `rgb(${r}, ${g}, ${b})`;
     }
@@ -37,25 +40,23 @@ window.RISKToolsCard = {};
             return null; // Return null if the fetch fails
         }
         const data = await response.json();
-        // *** Remove the || 900 default here ***
         return data.creditScore; // Return the fetched score (could be 0)
     }
 
 
     // Function to get the container div (flex-row) inside the specific parent
     function getContainerElement() {
-        const container = document.querySelector(
-            ".bg-canvas-0.w-full.rounded-lg.p-4.flex.flex-col > .flex.flex-col > .mt-2.gap-2.flex.flex-row"
-        );
-        return container;
+        return document.querySelector(targetContainerSelector);
     }
 
-    // Function to remove the existing credit score box
-    function removeCreditScoreBox() {
-        const existingBox = document.querySelector(`.${creditScoreBoxClass}`);
-        if (existingBox) {
-            existingBox.remove();
-            console.log("RISK Tools: Credit Score Box removed.");
+    // Function to remove ALL existing credit score boxes
+    function removeCreditScoreBoxes() {
+        const existingBoxes = document.querySelectorAll(`.${creditScoreBoxClass}`);
+        existingBoxes.forEach(box => {
+            box.remove();
+        });
+        if (existingBoxes.length > 0) {
+            console.log(`RISK Tools: Removed ${existingBoxes.length} Credit Score Box(es).`);
         }
         // Also remove any existing popup if it's still there
         removeRiskCardPopup();
@@ -70,74 +71,79 @@ window.RISKToolsCard = {};
         }
     }
 
-
     // Function to add the credit score box
     async function addCreditScoreBox() {
+        if (isInjecting) {
+            console.log("RISK Tools: Injection in progress, skipping.");
+            return;
+        }
+
+        isInjecting = true; // Set flag
+
         chrome.storage.local.get('creditScoreState', async function (result) {
             const creditScoreState = result.creditScoreState;
-            console.log('Credit score state is:', creditScoreState); // Debug log
+            console.log('Credit score state is:', creditScoreState);
 
-            // If toggle is off, do not inject the box
             if (!creditScoreState) {
                 console.log("RISK Tools: Credit score box injection is disabled.");
+                isInjecting = false; // Reset flag
                 return;
             }
 
             const container = getContainerElement();
             if (!container) {
-                console.log("RISK Tools: Container element not found, retrying...");
-                return;
+                console.log("RISK Tools: Container element not found.");
+                isInjecting = false; // Reset flag
+                return; // Container not found, wait for the observer
             }
 
-            // Ensure credit score box isn't already added
-            if (document.querySelector(`.${creditScoreBoxClass}`)) {
-                console.log("RISK Tools: Credit Score Box already injected, skipping.");
-                return;
-            }
+            // Before injecting, remove any potential leftovers
+            removeCreditScoreBoxes();
 
             const urlParts = window.location.pathname.split("/");
-            const username = urlParts[urlParts.length - 1]; // Get the last part of the URL as username
+            const username = urlParts[urlParts.length - 1];
 
             if (!username || username.length < 1) {
                 console.warn("RISK Tools: Invalid username");
+                isInjecting = false; // Reset flag
                 return;
             }
 
             const creditScore = await fetchCreditScore(username);
             if (creditScore === null) {
                 console.warn("RISK Tools: Failed to get the credit score, using default.");
+                // You might want to handle this case, perhaps inject a box indicating an error
+                isInjecting = false; // Reset flag
+                return; // Don't inject if score fetch failed
             }
 
-            // Create the new credit score box
             const newBox = document.createElement("div");
             newBox.className = "group cursor-pointer select-none rounded px-2 py-1 transition-colors opacity-[0.75] hover:opacity-100 bg-canvas-50 text-ink-1000 risk-credit-box";
             newBox.addEventListener("click", function (e) {
-                // Optional: make sure they didn't click inside the popup by accident
-                if (e.target.closest("button")) return; // Ignore clicks on buttons (like the 'X')
-
+                if (e.target.closest("button")) return;
                 window.open(`https://manifold.markets/news/risk`, "_blank");
-                // window.open(`https://risk.markets/ext/${username}`, "_blank"); // Open in a new tab
             });
-            // Get the text color based on the credit score
+
             const scoreColor = getTextColor(creditScore);
 
             newBox.innerHTML = `
                 <div class="flex flex-col">
                     <div class="items-center whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row">
                         <span class="inline-block" style="font-size: 1em; margin-right: 0.1em;">🦝</span>
-                        <span style="color: ${scoreColor};">${creditScore}</span> <!-- Apply dynamic color -->
+                        <span style="color: ${scoreColor};">${creditScore}</span>
                     </div>
                     <div class="text-ink-600 mx-auto -mt-1 text-xs transition-all">credit score</div>
                 </div>
             `;
 
             newBox.addEventListener("mouseenter", async function () {
-                const rect = newBox.getBoundingClientRect();
+                 // Prevent popup from showing if state is off (though this should be handled by addCreditScoreBox)
+                 let currentStateResult = await new Promise(resolve => chrome.storage.local.get('creditScoreState', resolve));
+                 if (!currentStateResult.creditScoreState) return;
 
-                // Remove any existing popup before creating a new one
+                const rect = newBox.getBoundingClientRect();
                 removeRiskCardPopup();
 
-                // Create popup element
                 const popup = document.createElement("div");
                 popup.className = riskCardPopupClass;
                 popup.style.position = "absolute";
@@ -150,48 +156,41 @@ window.RISKToolsCard = {};
                 popup.style.borderRadius = "10px";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
                 popup.style.zIndex = "1000";
-                popup.style.opacity = "0"; // Initial opacity for popup
-                popup.style.transition = "opacity 0.2s ease-in"; // Smooth fade-in transition for popup
+                popup.style.opacity = "0";
+                popup.style.transition = "opacity 0.2s ease-in";
 
-                // --- Generate card content using card.js function ---
-                // Ensure card.js has made createRiskCardHTML accessible
                 if (typeof window.RISKToolsCard === 'undefined' || typeof window.RISKToolsCard.createRiskCardHTML !== 'function') {
                     console.error("RISK Tools: card.js or createRiskCardHTML function not available for popup content.");
-                    // Add some fallback content or an error message in the popup
                     popup.innerHTML = `<div class="p-4 text-white">Error loading card content.</div>`;
                      document.body.appendChild(popup);
-                     setTimeout(() => { popup.style.opacity = "1"; }, 10); // Fade-in the error popup
-                     return; // Stop the rest of the logic
+                     setTimeout(() => { popup.style.opacity = "1"; }, 10);
+                     return;
                 }
 
                 const cardContentHtml = await window.RISKToolsCard.createRiskCardHTML(username);
 
                 if (!cardContentHtml || cardContentHtml.includes("Error loading data")) {
                     console.warn("RISK Tools: Failed to generate card content HTML or encountered an error in card.js.");
-                    // Add fallback content or an error message in the popup
                     popup.innerHTML = `<div class="p-4 text-white">Error loading card content.</div>`;
                     document.body.appendChild(popup);
-                    setTimeout(() => { popup.style.opacity = "1"; }, 10); // Fade-in the error popup in ms
-                    return; // Stop the rest of the logic
+                    setTimeout(() => { popup.style.opacity = "1"; }, 10);
+                    return;
                 }
 
-                // Set the generated HTML as the content of the popup
                 popup.innerHTML = cardContentHtml;
-                // ----------------------------------------------------
-
-                // Append popup to body
                 document.body.appendChild(popup);
-
-                // Trigger fade-in for the popup
                 setTimeout(() => {
-                    popup.style.opacity = "1"; // Fade-in the popup
-                }, 10); // Small delay in ms to ensure transition works
+                    popup.style.opacity = "1";
+                }, 10);
 
                 let isOverBoxOrPopup = true;
 
                 function checkLeave() {
                     if (!isOverBoxOrPopup) {
-                        document.body.removeChild(popup);
+                        if (document.body.contains(popup)) { // Check if popup is still in DOM before removing
+                           document.body.removeChild(popup);
+                        }
+                        // Remove listeners defensively
                         newBox.removeEventListener("mouseleave", onBoxLeave);
                         popup.removeEventListener("mouseleave", onPopupLeave);
                         popup.removeEventListener("mouseenter", onPopupEnter);
@@ -201,7 +200,7 @@ window.RISKToolsCard = {};
 
                 function onBoxLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave, 60); // small delay to allow entering popup in ms
+                    setTimeout(checkLeave, 60);
                 }
 
                 function onPopupLeave() {
@@ -218,64 +217,72 @@ window.RISKToolsCard = {};
                 }
 
                 newBox.addEventListener("mouseleave", onBoxLeave);
-                popup.addEventListener("mouseleave", onPopupLeave);
-                popup.addEventListener("mouseenter", onPopupEnter);
+                // Add these listeners only if the popup was successfully added
+                if(document.body.contains(popup)) {
+                    popup.addEventListener("mouseleave", onPopupLeave);
+                    popup.addEventListener("mouseenter", onPopupEnter);
+                }
                 newBox.addEventListener("mouseenter", onBoxEnter);
             });
 
 
-            // Find all the existing boxes inside the row
-            console.log("RISK Tools: Attempting to inject credit score box...");
-
-            // We already checked the state and container existence at the beginning of the function,
-            // so this nested block is slightly redundant but can remain if you prefer.
-            // The essential logic is below.
-
             const boxes = container.querySelectorAll(".group.cursor-pointer");
-            console.log(`RISK Tools: Found ${boxes.length} boxes in the container.`);
+            console.log(`RISK Tools: Found ${boxes.length} boxes in the container before adding.`);
 
-            if (boxes.length === 3) {
-                // Inject the new box after the 3rd box
+            if (boxes.length >= 3) { // Use >= in case there are more than 3 original boxes
                 boxes[2].insertAdjacentElement('afterend', newBox);
                 console.log("RISK Tools: Credit Score Box injected after the third item.");
             } else {
-                // If there aren't exactly 3 boxes, append the new box to the container
                 container.appendChild(newBox);
                 console.log("RISK Tools: Credit Score Box appended to the container.");
             }
+
+            isInjecting = false; // Reset flag
         });
     }
 
-    // Initially check the state and act accordingly
-    chrome.storage.local.get('creditScoreState', function (result) {
-        if (result.creditScoreState) {
-            addCreditScoreBox();
+    // Function to start observing the DOM for the target container
+    function observeForContainer() {
+        if (observer) {
+            observer.disconnect(); // Disconnect previous observer if exists
         }
-    });
+
+        const body = document.body;
+        if (!body) {
+            console.error("RISK Tools: Document body not found for observer.");
+            return;
+        }
+
+        observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                    const container = getContainerElement();
+                    if (container) {
+                        console.log("RISK Tools: Target container found by observer.");
+                        observer.disconnect(); // Stop observing once found
+                        // Add a small delay to ensure child elements are rendered
+                        setTimeout(addCreditScoreBox, 100); // Adjust delay if needed
+                    }
+                }
+            });
+        });
+
+        // Start observing the body for changes in its children
+        observer.observe(body, { childList: true, subtree: true });
+        console.log("RISK Tools: Started observing for target container.");
+    }
+
+    // Initial setup: remove existing boxes and start observing
+    removeCreditScoreBoxes();
+    observeForContainer();
 
     // Listen for URL changes from background.js
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.message === 'urlChanged') {
-            console.log('New URL: ' + request.url); // URL passed from background.js
-
-            // Remove the existing credit score box and any associated popup
-            removeCreditScoreBox();
-
-            // Wait a bit before trying to re-inject the credit score box
-            setTimeout(async () => {
-                try {
-                    await addCreditScoreBox();
-                } catch (error) {
-                    console.error("RISK Tools: Failed to inject credit score box on first attempt. Retrying...", error);
-                    setTimeout(async () => {
-                        try {
-                            await addCreditScoreBox();
-                        } catch (error) {
-                            console.error("RISK Tools: Failed to inject credit score box on second attempt. Stopping...", error);
-                        }
-                    }, 1500); // Retry after 1.5 seconds
-                }
-            }, 1500); // Wait 1.5 seconds before attempting to reinject!
+            console.log('New URL detected: ' + request.url);
+            // On URL change, remove existing boxes and start observing again
+            removeCreditScoreBoxes();
+            observeForContainer();
         }
     });
 
