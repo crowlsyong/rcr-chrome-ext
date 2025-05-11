@@ -165,11 +165,42 @@ window.RISKToolsCard = {};
                 popup.style.borderRadius = "10px";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
                 popup.style.zIndex = "1000";
-                popup.style.opacity = "0"; // Initial opacity for popup
-                popup.style.transition = "opacity 0.2s ease-in"; // Smooth fade-in transition for popup
+                popup.style.opacity = "0"; 
+                popup.style.transition = "opacity 0.2s ease-in";
 
-                // Add initial loading content immediately
-                popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Loading...</div>`; // ADD THIS LINE
+                // Loading spinner
+                popup.innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 300px; /* adjust as needed */
+                    height: 144px; /* adjust as needed */
+                    padding: 16px;
+                    background-color: #1f2937; /* Tailwind bg-canvas-50 fallback */
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                    color: white;
+                ">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .spinthing {
+                        transform-origin: center;
+                        animation: spin 0.40s linear infinite;
+                        }
+                        @keyframes spin {
+                        100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                    <path
+                        class="spinthing"
+                        d="M12 2a10 10 0 0 0-9.5 7.1c-.2.7.3 1.4 1 1.5s1.4-.3 1.6-1A7.5 7.5 0 0 1 12 4.5c.8 0 1.5-.7 1.5-1.5S12.8 2 12 2z"
+                        fill="#a88df8"
+                    />
+                    </svg>
+                </div>`;
+
 
                 // Append popup to body
                 document.body.appendChild(popup);
@@ -239,12 +270,12 @@ window.RISKToolsCard = {};
 
                 function onBoxLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave, 60); // small delay to allow entering popup in ms
+                    setTimeout(checkLeave, 100); // small delay to allow entering popup in ms
                 }
 
                 function onPopupLeave() {
                     isOverBoxOrPopup = false;
-                    setTimeout(checkLeave, 60);
+                    setTimeout(checkLeave, 100);
                 }
 
                 function onBoxEnter() {
