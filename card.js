@@ -43,6 +43,30 @@ function getScoreColor(score) {
 }
 
 // card.js (updated createRiskCardHTML)
+window.RISKToolsCard.renderPlaceholderCard = function (username) {
+  return `
+    <div class="w-80 p-4 md:p-6 rounded-lg text-white bg-slate-900 border-2 border-slate-700 animate-pulse">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 rounded-full bg-slate-700 mr-2"></div>
+        <div class="flex-1">
+          <div class="h-4 bg-slate-700 rounded w-24 mb-1"></div>
+          <div class="h-3 bg-slate-700 rounded w-32"></div>
+        </div>
+        <div class="ml-auto text-right">
+          <div class="h-3 bg-slate-700 rounded w-16 mb-1"></div>
+          <div class="h-6 bg-slate-700 rounded w-12"></div>
+        </div>
+      </div>
+      <div class="mt-3 px-3 py-5 rounded-md bg-slate-800 text-center relative">
+        <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <p class="text-xs mt-2">Loading score for <strong>${username}</strong>...</p>
+      </div>
+    </div>
+  `;
+};
 
 window.RISKToolsCard.createRiskCardHTML = async function (username) {
   try {
@@ -55,14 +79,14 @@ window.RISKToolsCard.createRiskCardHTML = async function (username) {
 
     // *** Adjusted data check to explicitly check for null/undefined ***
     if (!userData || userData.creditScore === null || typeof userData.creditScore === 'undefined' || !userData.avatarUrl || typeof userData.riskMultiplier === 'undefined' || userData.userExists === false) {
-        console.error(`Incomplete or invalid user data for ${username}`, userData);
-        let errorMessage = `Incomplete data for ${username}.`;
-        if (userData && userData.userExists === false) {
-             errorMessage = `User ${username} not found on RISK Markets.`;
-        } else if (userData && (userData.creditScore === null || typeof userData.creditScore === 'undefined')) {
-            errorMessage = `Credit score not available for ${username}.`;
-        }
-        return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">${errorMessage}</div>`;
+      console.error(`Incomplete or invalid user data for ${username}`, userData);
+      let errorMessage = `Incomplete data for ${username}.`;
+      if (userData && userData.userExists === false) {
+        errorMessage = `User ${username} not found on RISK Markets.`;
+      } else if (userData && (userData.creditScore === null || typeof userData.creditScore === 'undefined')) {
+        errorMessage = `Credit score not available for ${username}.`;
+      }
+      return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">${errorMessage}</div>`;
     }
 
     const creditScore = userData.creditScore; // This will now be 0 for Tumbles

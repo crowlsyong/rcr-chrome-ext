@@ -38,7 +38,7 @@
     {
       "matches": ["https://manifold.markets/*"],
       "js": ["content.js", "card.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ],
   "background": {

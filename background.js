@@ -11,6 +11,9 @@ chrome.runtime.onInstalled.addListener(function () {
 // Handle tab updates (URL changes) and message content script
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.url) {
+        // Start the timer when URL changes
+        const startTime = performance.now();  // Start time when URL changes
+
         // Send the new URL to content script
         chrome.tabs.sendMessage(tabId, {
             message: 'urlChanged',
@@ -29,8 +32,22 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 console.warn('Content script not found (fadeToBlack):', chrome.runtime.lastError.message);
             }
         });
+
+        // Inject content and measure time taken
+        chrome.tabs.sendMessage(tabId, {
+            message: 'injectCreditScoreBox'
+        }, function (response) {
+            if (chrome.runtime.lastError) {
+                console.warn('Content script not found (injectCreditScoreBox):', chrome.runtime.lastError.message);
+            }
+
+            // Calculate the time elapsed since the URL change and log it
+            const elapsedTime = performance.now() - startTime;
+            console.log(`RISK Tools: Credit Score Box injected after URL change. Time taken: ${elapsedTime.toFixed(2)} ms`);
+        });
     }
 });
+
 
 // Listener for toggle state change from popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {

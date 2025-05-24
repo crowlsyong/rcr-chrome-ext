@@ -45,7 +45,6 @@ window.RISKToolsCard = {};
             return null; // Return null if the fetch fails
         }
         const data = await response.json();
-        // *** Remove the || 900 default here ***
         return data.creditScore; // Return the fetched score (could be 0)
     }
 
@@ -144,8 +143,8 @@ window.RISKToolsCard = {};
 
             newBox.addEventListener("mouseenter", async function () {
                 // Prevent popup from showing if state is off (though this should be handled by addCreditScoreBox)
-                 let currentStateResult = await new Promise(resolve => chrome.storage.local.get('creditScoreState', resolve));
-                 if (!currentStateResult.creditScoreState) return; // Make sure state is still on
+                let currentStateResult = await new Promise(resolve => chrome.storage.local.get('creditScoreState', resolve));
+                if (!currentStateResult.creditScoreState) return; // Make sure state is still on
 
                 const rect = newBox.getBoundingClientRect();
 
@@ -165,7 +164,7 @@ window.RISKToolsCard = {};
                 popup.style.borderRadius = "10px";
                 popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
                 popup.style.zIndex = "1000";
-                popup.style.opacity = "0"; 
+                popup.style.opacity = "0";
                 popup.style.transition = "opacity 0.2s ease-in";
 
                 // Loading spinner
@@ -211,41 +210,60 @@ window.RISKToolsCard = {};
                 }, 10); // Small delay in ms to ensure transition works
 
                 // --- The following block handles fetching and updating the popup content ---
+                // Ensure this is defined earlier in the file (before the try block)
+                window.RISKToolsCard.renderPlaceholderCard = function (username) {
+                    return `
+        <div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white">
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin h-8 w-8 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v4m0 12v4m6-6h4m-16 0h4m10.93-9.93l-2.83 2.83m-10.6 0l-2.83-2.83m13.66 10.6l-2.83-2.83m-10.6 0l-2.83 2.83"></path>
+                </svg>
+            </div>
+            <p class="mt-2 text-center text-sm">Loading Credit Score for ${username}...</p>
+        </div>
+    `;
+                };
+
+                // The try-catch block for fetching and updating the card
                 try {
                     // Ensure card.js has made createRiskCardHTML accessible
                     if (typeof window.RISKToolsCard === 'undefined' || typeof window.RISKToolsCard.createRiskCardHTML !== 'function') {
                         console.error("RISK Tools: card.js or createRiskCardHTML function not available for popup content.");
-                        // Update the popup with an error message if already added
-                         if(document.body.contains(popup)) { // Check if popup is still in DOM
-                             popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading card content.</div>`; // MODIFIED THIS LINE
-                         }
+                        if (document.body.contains(popup)) {
+                            popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading card content.</div>`;
+                        }
                         return; // Stop the rest of the logic
                     }
 
-                    const cardContentHtml = await window.RISKToolsCard.createRiskCardHTML(username);
+                    // Show the placeholder with loading spinner while waiting for the data
+                    const cardContentHtml = window.RISKToolsCard.renderPlaceholderCard(username);
+                    if (document.body.contains(popup)) {
+                        popup.innerHTML = cardContentHtml;
+                    }
 
-                    if (!cardContentHtml || cardContentHtml.includes("Error loading data")) {
+                    // Wait for the actual card content after the API call
+                    const generatedCardHtml = await window.RISKToolsCard.createRiskCardHTML(username);
+
+                    // Handle errors or missing card content
+                    if (!generatedCardHtml || generatedCardHtml.includes("Error loading data")) {
                         console.warn("RISK Tools: Failed to generate card content HTML or encountered an error in card.js.");
-                        // Update the popup with an error message if already added
-                        if(document.body.contains(popup)) { // Check if popup is still in DOM
-                            popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading card content.</div>`; // MODIFIED THIS LINE
+                        if (document.body.contains(popup)) {
+                            popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading card content.</div>`;
                         }
                         return; // Stop the rest of the logic
                     }
 
                     // Update the popup content after the fetch and generation
-                    if(document.body.contains(popup)) { // Check if popup is still in DOM before updating
-                        popup.innerHTML = cardContentHtml; // MODIFIED THIS LINE
+                    if (document.body.contains(popup)) {
+                        popup.innerHTML = generatedCardHtml;
                     }
 
                 } catch (error) {
                     console.error("RISK Tools: Error fetching card data:", error);
-                    // Update the popup with an error message if an error occurred
-                    if(document.body.contains(popup)) { // Check if popup is still in DOM
-                        popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading data.</div>`; // ADD THIS LINE
+                    if (document.body.contains(popup)) {
+                        popup.innerHTML = `<div class="p-4 text-white bg-canvas-50 rounded-lg">Error loading data.</div>`;
                     }
                 }
-                // --- End of fetching and updating block ---
 
 
                 // --- Mouse tracking logic (keep this as it is for hover persistence) ---
@@ -255,16 +273,16 @@ window.RISKToolsCard = {};
                     if (!isOverBoxOrPopup) {
                         // Check if popup is still in DOM before attempting to remove
                         if (document.body.contains(popup)) {
-                           document.body.removeChild(popup);
+                            document.body.removeChild(popup);
                         }
                         // Remove listeners defensively
                         newBox.removeEventListener("mouseleave", onBoxLeave);
                         // Remove popup listeners only if the popup was successfully added and is still in DOM
-                        if(document.body.contains(popup)) {
-                           popup.removeEventListener("mouseleave", onPopupLeave);
-                           popup.removeEventListener("mouseenter", onPopupEnter);
+                        if (document.body.contains(popup)) {
+                            popup.removeEventListener("mouseleave", onPopupLeave);
+                            popup.removeEventListener("mouseenter", onPopupEnter);
                         }
-                         // DO NOT remove the main newBox mouseenter listener here
+                        // DO NOT remove the main newBox mouseenter listener here
                     }
                 }
 
@@ -288,15 +306,15 @@ window.RISKToolsCard = {};
 
                 newBox.addEventListener("mouseleave", onBoxLeave);
                 // Add popup listeners only if the popup element was successfully added and is still in the DOM
-                if(document.body.contains(popup)) {
-                   popup.addEventListener("mouseleave", onPopupLeave);
-                   popup.addEventListener("mouseenter", onPopupEnter);
+                if (document.body.contains(popup)) {
+                    popup.addEventListener("mouseleave", onPopupLeave);
+                    popup.addEventListener("mouseenter", onPopupEnter);
                 }
                 // ** Make sure you DON'T have another newBox.addEventListener("mouseenter", onBoxEnter); here **
             });
 
 
-
+            
             // Find all the existing boxes inside the row
             console.log("RISK Tools: Attempting to inject credit score box...");
 
@@ -313,15 +331,26 @@ window.RISKToolsCard = {};
                 return;
             }
 
-            if (boxes.length === 3) {
-                // Inject the new box after the 3rd box
-                boxes[2].insertAdjacentElement('afterend', newBox);
-                console.log("RISK Tools: Credit Score Box injected after the third item.");
-            } else {
-                // If there aren't exactly 3 boxes, append the new box to the container
-                container.appendChild(newBox);
-                console.log("RISK Tools: Credit Score Box appended to the container.");
-            }
+// Record the start time when the page loads
+const startTime = performance.now();
+
+// Your existing code to handle box injection
+if (boxes.length === 3) {
+    // Inject the new box after the 3rd box
+    boxes[2].insertAdjacentElement('afterend', newBox);
+
+    // Calculate elapsed time and log it
+    const elapsedTime = performance.now() - startTime;
+    console.log(`RISK Tools: Credit Score Box injected after the third item. Time taken: ${elapsedTime.toFixed(2)} ms`);
+} else {
+    // If there aren't exactly 3 boxes, append the new box to the container
+    container.appendChild(newBox);
+
+    // Calculate elapsed time and log it
+    const elapsedTime = performance.now() - startTime;
+    console.log(`RISK Tools: Credit Score Box appended to the container. Time taken: ${elapsedTime.toFixed(2)} ms`);
+}
+
 
         });
     }
@@ -334,29 +363,63 @@ window.RISKToolsCard = {};
     });
 
     // Listen for URL changes from background.js
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-        if (request.message === 'urlChanged') {
-            console.log('New URL: ' + request.url); // URL passed from background.js
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.message === 'urlChanged') {
+        console.log('New URL: ' + request.url); // URL passed from background.js
 
-            // Remove the existing credit score box and any associated popup
-            removeCreditScoreBox();
+        // Remove the existing credit score box and any associated popup
+        removeCreditScoreBox();
 
-            // Wait a bit before trying to re-inject the credit score box
-            setTimeout(async () => {
-                try {
-                    await addCreditScoreBox();
-                } catch (error) {
-                    console.error("RISK Tools: Failed to inject credit score box on first attempt. Retrying...", error);
-                    setTimeout(async () => {
-                        try {
-                            await addCreditScoreBox();
-                        } catch (error) {
-                            console.error("RISK Tools: Failed to inject credit score box on second attempt. Stopping...", error);
-                        }
-                    }, 1500); // Retry after 1.5 seconds
-                }
-            }, 1500); // Wait 1.5 seconds before attempting to reinject!
-        }
-    });
+        // Start the timer to track the injection time
+        const startTime = performance.now();
+
+        // Wait a bit before trying to re-inject the credit score box
+        setTimeout(async () => {
+            try {
+                await addCreditScoreBox();
+                
+                // Calculate and log the time it took to inject the box
+                const elapsedTime = performance.now() - startTime;
+                console.log(`RISK Tools: Credit Score Box injected after URL change. Time taken: ${elapsedTime.toFixed(2)} ms`);
+            } catch (error) {
+                console.error("RISK Tools: Failed to inject credit score box on first attempt. Retrying...", error);
+                
+                setTimeout(async () => {
+                    try {
+                        await addCreditScoreBox();
+                        
+                        // Calculate and log the time it took for the second attempt
+                        const elapsedTime = performance.now() - startTime;
+                        console.log(`RISK Tools: Credit Score Box injected on second attempt. Time taken: ${elapsedTime.toFixed(2)} ms`);
+                    } catch (error) {
+                        console.error("RISK Tools: Failed to inject credit score box on second attempt. Stopping...", error);
+                    }
+                }, 165); // Retry after 1.5 seconds
+            }
+        }, 165); // Wait 1.5 seconds before attempting to reinject!
+    }
+});
+
+    function waitForContainerAndInject(retries = 50, delay = 2) {
+        let attempt = 0;
+
+        const checkAndInject = async () => {
+            const container = getContainerElement();
+            if (container) {
+                await addCreditScoreBox();
+            } else if (attempt < retries) {
+                attempt++;
+                setTimeout(checkAndInject, delay);
+            } else {
+                console.warn("RISK Tools: Container not found after waiting.");
+            }
+        };
+
+        checkAndInject();
+    }
+
+    // Safe to call early even with "run_at": "document_start"
+    waitForContainerAndInject();
+
 
 })();
