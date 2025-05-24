@@ -1,32 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RISK Tools</title>
+    <link rel="stylesheet" href="./css/index.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RISK Tools</title>
-  <link rel="stylesheet" href="./css/index.css">
-</head>
+  <body>
+    <div class="content-wrapper">
+      <img src="./images/risk-logo-mini.png" alt="RISK Logo" class="logo" />
+<p style="margin-top: 5px; margin-bottom: 25px;">
+        Recovery Insurance Service Kiosk
+      </p>
+      <!-- Toggle Switch for Showing Credit Score -->
+      <div class="toggle-container">
+        <label for="credit-score-toggle">View credit score in app</label>
+        <input type="checkbox" id="credit-score-toggle" />
+      </div>
 
-<body>
-  <div>
-    <img src="./images/risk-logo-mini.png" alt="RISK Logo" class="logo">
-    <p>Recovery Insurance Service Kiosk</p>
+      <a href="https://risk.deno.dev" class="button" target="_blank"
+        >Visit the Website</a
+      >
+      <a href="https://manifold.markets/news/risk" class="button" target="_blank"
+        >Visit Dashboard</a
+      >
+      <a href="https://manifold.markets/crowlsyong" class="button" target="_blank"
+        >Contact RISK</a
+      >
+      <!-- Feedback Button -->
+      <div style="text-align: right;">
+        <a
+          href="https://github.com/crowlsyong/rcr-chrome-ext/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="feedback-button"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="16"
+            height="16"
+            style="vertical-align: middle; margin-right: 6px;"
+          >
+            <path
+              d="M12 0C5.373 0 0 5.373 0 12a12.01 12.01 0 0 0 8.207 11.387c.6.111.82-.261.82-.58 0-.285-.011-1.04-.017-2.04-3.338.725-4.042-1.61-4.042-1.61-.546-1.387-1.334-1.757-1.334-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.81 1.304 3.495.997.109-.775.418-1.305.762-1.605-2.665-.304-5.467-1.332-5.467-5.931 0-1.31.469-2.381 1.237-3.221-.124-.303-.536-1.523.118-3.176 0 0 1.008-.322 3.3 1.23a11.51 11.51 0 0 1 3.003-.404c1.02.005 2.047.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.243 2.873.119 3.176.77.84 1.236 1.911 1.236 3.221 0 4.61-2.807 5.625-5.479 5.921.43.372.814 1.103.814 2.222 0 1.605-.015 2.898-.015 3.293 0 .322.217.696.825.578A12.01 12.01 0 0 0 24 12c0-6.627-5.373-12-12-12z"
+            />
+          </svg>
+          Feedback
+        </a>
+      </div>
 
-    <!-- Toggle Switch for Showing Credit Score -->
-    <div class="toggle-container">
-      <label for="credit-score-toggle">View credit score in app</label>
-      <input type="checkbox" id="credit-score-toggle">
+      <!-- Settings link with only the icon -->
+      <a href="options.html" class="settings-link" target="_blank">⚙️</a>
     </div>
-
-    <a href="https://risk.deno.dev" class="button" target="_blank">Visit the Website</a>
-    <a href="https://manifold.markets/news/risk" class="button" target="_blank">Visit Dashboard</a>
-    <a href="https://manifold.markets/crowlsyong" class="button" target="_blank">Contact RISK</a>
-
-    <!-- Settings link with only the icon -->
-    <a href="options.html" class="settings-link" target="_blank">⚙️</a>
-  </div>
-  <script src="popup.js"></script>
-</body>
-
+    <script src="popup.js"></script>
+  </body>
 </html>
