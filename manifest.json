@@ -39,6 +39,17 @@
       "matches": ["https://manifold.markets/*"],
       "js": ["content.js", "card.js"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["https://risk.markets/*"],
+      "js": ["api-inject.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["data/reservedPaths.json"],
+      "matches": ["https://manifold.markets/*", "https://risk.markets/*"]
     }
   ],
   "background": {
