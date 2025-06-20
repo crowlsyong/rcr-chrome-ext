@@ -1,4 +1,3 @@
-<!-- options.html -->
 <!doctype html>
 <html lang="en">
 
@@ -10,46 +9,111 @@
 </head>
 
 <body>
-  <div>
-    <img src="./images/risk-logo-mini.png" height="60px" alt="RISK Logo" class="logo">
-    <h1>Options</h1>
+  <div class="page-wrapper">
+    <header class="main-header">
+      <div class="header-content">
+        <img src="./images/risk-logo-mini.png" height="50px" alt="RISK Logo" class="logo-header">
+        <h1 class="page-title">Settings</h1>
+      </div>
+      <a href="https://manifold.markets/crowlsyong?tab=payments" target="_blank" rel="noopener noreferrer"
+        class="header-donate-button">
+        💖 Donate Mana
+      </a>
+    </header>
 
-    <!-- Dark Mode Toggle -->
-    <div class="toggle-container">
-      <label for="dark-mode-toggle">Dark Mode</label>
-      <p>NOT WORKING </p>
-      <input type="checkbox" id="dark-mode-toggle">
-    </div>
+    <main class="settings-main">
+      <section class="settings-section">
+        <h2 class="section-heading">General Settings</h2>
 
-    <!-- Fix White Flash Toggle -->
-    <div class="toggle-container">
-      <label for="fix-white-flash-toggle">Fix white flash</label>
-      <p>NOT WORKING </p>
-      <input type="checkbox" id="fix-white-flash-toggle">
-    </div>
+        <!-- App Toggle Row -->
+        <div class="setting-row toggle-row">
+          <label for="app-toggle" class="setting-label">View Credit Score in App:</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="app-toggle" />
+            <label for="app-toggle" class="toggle-slider"></label>
+          </div>
+        </div>
+        <p class="setting-note">
+          Enable/disable the display of RISK Credit Scores on Manifold Markets profile pages.
+        </p>
+      </section>
 
-    <hr style="margin: 20px 0; border-top: 1px solid #333;">
 
-    <h2>Manifold API Key</h2>
-    <div class="input-group">
-      <label for="manifold-api-key">Your Manifold Markets API Key:</label>
-      <input type="password" id="manifold-api-key" placeholder="Enter your API key">
-      <button id="save-api-key" class="button">Save API Key</button>
-      <p id="api-key-status" style="font-size: 0.8em; margin-top: 5px; color: #aaa;"></p>
-    </div>
+      <section class="settings-section">
+        <h2 class="section-heading">Manifold Integration</h2>
+        <p class="section-description">
+          These settings enhance your experience on risk.markets by integrating with your Manifold Markets account.
+          Data is stored locally in your browser and never sent to our servers.
+        </p>
 
-    <!-- Feedback Button -->
-    <div style="text-align: right; margin-top: 1em;">
-      <a href="https://github.com/crowlsyong/rcr-chrome-ext/issues" target="_blank" rel="noopener noreferrer"
-        class="feedback-button">
+        <!-- API Key Row -->
+        <div class="setting-row">
+          <label for="manifold-api-key" class="setting-label">
+            Manifold API Key
+            <span class="info-icon-wrapper">
+              <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <div class="tooltip-content api-key-tooltip">
+                Find your API key on your Manifold profile page by clicking the gear
+                icon and selecting Account Settings.
+              </div>
+            </span>:
+          </label>
+          <input type="password" id="manifold-api-key" placeholder="e.g., xxxxx-xxxx-xxxx-xxxxxxxxxxxxxxx"
+            class="text-input" />
+          <!-- Buttons directly in setting-row, will be toggled -->
+          <button id="save-api-key" class="action-button save-button">Save</button>
+          <button id="delete-api-key" class="action-button delete-button hidden">Delete</button>
+        </div>
+        <!--
+        <hr class="section-divider">
+
+ Manifold User ID Row -->
+        <!-- <div class="setting-row">
+          <label for="manifold-user-id" class="setting-label">
+            Manifold User ID
+            <span class="info-icon-wrapper">
+              <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <div class="tooltip-content user-id-tooltip">
+                Your unique Manifold User ID. This can be found in the URL by replacing `your_username` in this url:
+                <code class="code-snippet">https://api.manifold.markets/v0/user/your_username/lite</code>
+              </div>
+            </span>:
+          </label>
+          <input
+            type="text"
+            id="manifold-user-id"
+            placeholder="e.g., QsM0P2qT0fX8hY9z3aB1cD4eF6gH7iJ2kL5mN0o"
+            class="text-input"
+          />
+          <button id="save-user-id" class="action-button save-button">Save</button>
+          <button id="delete-user-id" class="action-button delete-button hidden">Delete</button>
+        </div> -->
+
+      </section>
+
+    </main>
+
+    <footer class="main-footer">
+      <a href="https://github.com/crowlsyong/rcr-chrome-ext/" target="_blank" rel="noopener noreferrer"
+        class="footer-button contribute-button">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"
           style="vertical-align: middle; margin-right: 6px;">
           <path
             d="M12 0C5.373 0 0 5.373 0 12a12.01 12.01 0 0 0 8.207 11.387c.6.111.82-.261.82-.58 0-.285-.011-1.04-.017-2.04-3.338.725-4.042-1.61-4.042-1.61-.546-1.387-1.334-1.757-1.334-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.81 1.304 3.495.997.109-.775.418-1.305.762-1.605-2.665-.304-5.467-1.332-5.467-5.931 0-1.31.469-2.381 1.237-3.221-.124-.303-.536-1.523.118-3.176 0 0 1.008-.322 3.3 1.23a11.51 11.51 0 0 1 3.003-.404c1.02.005 2.047.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.243 2.873.119 3.176.77.84 1.236 1.911 1.236 3.221 0 4.61-2.807 5.625-5.479 5.921.43.372.814 1.103.814 2.222 0 1.605-.015 2.898-.015 3.293 0 .322.217.696.825.578A12.01 12.01 0 0 0 24 12c0-6.627-5.373-12-12-12z" />
         </svg>
-        Feedback
+        Contribute
       </a>
-    </div>
+    </footer>
+
   </div>
   <script src="options.js"></script>
 </body>

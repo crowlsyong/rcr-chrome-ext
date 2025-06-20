@@ -46,17 +46,19 @@ p {
   width: 90%;
   padding: 10px;
   margin: 10px auto; /* Center buttons */
+  border: solid 0.8px #334155; /* Dark border */
   border-radius: 5px;
   font-size: 1rem;
   color: #ffffff;
-  background-color: #475569; /* Mellowed out button color */
+  background-color: #101729; /* Mellowed out button color */
   text-decoration: none;
   text-align: center;
   transition: background-color 0.2s ease;
+  font-size: small;
 }
 
 .button:hover {
-  background-color: #64748b; /* Slightly lighter mellow color for hover */
+  background-color: #1e293b; /* Slightly lighter mellow color for hover */
 }
 
 .toggle-container {
@@ -125,7 +127,7 @@ p {
   color: #fff;
   border: none;
   border-radius: 0.375rem; /* 6px */
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   text-decoration: none;
   transition: background-color 0.2s ease;
 }

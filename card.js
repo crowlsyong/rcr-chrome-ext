@@ -106,12 +106,12 @@ window.RISKToolsCard.createRiskCardHTML = async function (
             );
             return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white" style="background-color: #0F1729; border: 2px solid #4A5568;">User <strong>${username}</strong> not found on RISK Markets.</div>`;
         }
-        
+
         // Credit score can be 0 (e.g. for Tumbles) or null if not set, which is fine.
         // AvatarURL and riskMultiplier should exist if userExists is true.
         if (typeof userData.creditScore === 'undefined' || !userData.avatarUrl || typeof userData.riskMultiplier === 'undefined') {
-             console.error(`RISK Tools (card.js): Incomplete data for existing user ${username}`, userData);
-             return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white" style="background-color: #0F1729; border: 2px solid #4A5568;">Incomplete data for ${username}. Score or other details missing.</div>`;
+            console.error(`RISK Tools (card.js): Incomplete data for existing user ${username}`, userData);
+            return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white" style="background-color: #0F1729; border: 2px solid #4A5568;">Incomplete data for ${username}. Score or other details missing.</div>`;
         }
 
 
@@ -136,9 +136,8 @@ window.RISKToolsCard.createRiskCardHTML = async function (
             </div>
             <div class="flex flex-col text-right ml-auto">
                 <span class="text-xs text-slate-400">Credit Score:</span>
-                <span class="text-3xl font-bold" style="color: ${scoreColor};">${
-            creditScore !== null ? creditScore : "N/A"
-        }</span>
+                <span class="text-3xl font-bold" style="color: ${scoreColor};">${creditScore !== null ? creditScore : "N/A"
+            }</span>
             </div>
         </div>
         <div class="mt-3 px-3 py-2 rounded-md relative" style="background-color: ${riskLevelBackgroundColor};">

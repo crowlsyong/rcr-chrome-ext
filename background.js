@@ -18,7 +18,7 @@ async function fetchReservedPathsBackground() {
       error && typeof error === "object" && "message" in error
         ? error.message
         : String(error)
-    }`);
+      }`);
     RESERVED_PATHS_BACKGROUND_DATA = [];
   }
 }
@@ -44,7 +44,7 @@ function isReservedPathBackground(url) {
       e && typeof e === "object" && "message" in e
         ? e.message
         : String(e)
-    }`);
+      }`);
     return false;
   }
 }
@@ -67,8 +67,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   ) {
     if (isReservedPathBackground(changeInfo.url)) {
       console.log("RISK Tools Background: Skipping messages for reserved path:", changeInfo.url);
-      chrome.tabs.sendMessage(tabId, { message: 'removeCreditScoreBox' }, function(response) {
-           if (chrome.runtime.lastError) { /* ignore */ }
+      chrome.tabs.sendMessage(tabId, { message: 'removeCreditScoreBox' }, function (response) {
+        if (chrome.runtime.lastError) { /* ignore */ }
       });
       return;
     }
@@ -76,25 +76,25 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     const startTime = performance.now();
 
     chrome.tabs.sendMessage(tabId, { message: "urlChanged", url: changeInfo.url }, function (response) {
-        if (chrome.runtime.lastError) { console.warn("Content script not found (urlChanged):", chrome.runtime.lastError.message); }
-      }
+      if (chrome.runtime.lastError) { console.warn("Content script not found (urlChanged):", chrome.runtime.lastError.message); }
+    }
     );
 
     chrome.tabs.sendMessage(tabId, { message: "fadeToBlack" }, function (response) {
-        if (chrome.runtime.lastError) { console.warn("Content script not found (fadeToBlack):", chrome.runtime.lastError.message); }
-      }
+      if (chrome.runtime.lastError) { console.warn("Content script not found (fadeToBlack):", chrome.runtime.lastError.message); }
+    }
     );
 
     chrome.tabs.sendMessage(tabId, { message: "injectCreditScoreBox" }, function (response) {
-        if (chrome.runtime.lastError) { console.warn("Content script not found (injectCreditScoreBox):", chrome.runtime.lastError.message); }
-        const elapsedTime = performance.now() - startTime;
-        console.log(`RISK Tools Background: Credit Score Box message sent after URL change. Time taken: ${elapsedTime.toFixed(2)} ms`);
-      }
+      if (chrome.runtime.lastError) { console.warn("Content script not found (injectCreditScoreBox):", chrome.runtime.lastError.message); }
+      const elapsedTime = performance.now() - startTime;
+      console.log(`RISK Tools Background: Credit Score Box message sent after URL change. Time taken: ${elapsedTime.toFixed(2)} ms`);
+    }
     );
   } else if (changeInfo.url) {
-      chrome.tabs.sendMessage(tabId, { message: 'removeCreditScoreBox' }, function(response) {
-          if (chrome.runtime.lastError) { /* ignore */ }
-      });
+    chrome.tabs.sendMessage(tabId, { message: 'removeCreditScoreBox' }, function (response) {
+      if (chrome.runtime.lastError) { /* ignore */ }
+    });
   }
 });
 
@@ -106,15 +106,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       console.log("Toggle state saved: " + message.state);
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (tabs[0] && tabs[0].url && tabs[0].url.startsWith("https://manifold.markets/")) {
-             if (message.state) {
-                  if (!isReservedPathBackground(tabs[0].url)) {
-                       chrome.tabs.sendMessage(tabs[0].id, { message: 'urlChanged', url: tabs[0].url });
-                  } else {
-                      console.log("RISK Tools Background: Toggle enabled but current page is a reserved path, skipping injection.");
-                  }
-             } else {
-                  chrome.tabs.sendMessage(tabs[0].id, { message: 'removeCreditScoreBox' });
-             }
+          if (message.state) {
+            if (!isReservedPathBackground(tabs[0].url)) {
+              chrome.tabs.sendMessage(tabs[0].id, { message: 'urlChanged', url: tabs[0].url });
+            } else {
+              console.log("RISK Tools Background: Toggle enabled but current page is a reserved path, skipping injection.");
+            }
+          } else {
+            chrome.tabs.sendMessage(tabs[0].id, { message: 'removeCreditScoreBox' });
+          }
         }
       });
     });
@@ -167,12 +167,12 @@ chrome.alarms.onAlarm.addListener(function (alarm) {
               chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
                 func: () => {
-                   document.body.classList.add("inject-content");
-                   chrome.runtime.sendMessage({ message: 'injectCreditScoreBox' });
+                  document.body.classList.add("inject-content");
+                  chrome.runtime.sendMessage({ message: 'injectCreditScoreBox' });
                 }
               });
             } else {
-                console.log("RISK Tools Background: Alarm triggered on a reserved path, skipping injection.");
+              console.log("RISK Tools Background: Alarm triggered on a reserved path, skipping injection.");
             }
           }
         });

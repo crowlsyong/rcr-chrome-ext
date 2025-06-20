@@ -1,128 +1,401 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0F1729;
-    /* Dark theme background */
-    color: #E0E0E0;
-    /* Light text color for contrast */
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0e18;
+    color: #e0e0e0;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-div {
-    width: 100%;
-    max-width: 350px;
-    /* Narrower layout */
-    padding: 20px;
+    min-height: 100vh;
     box-sizing: border-box;
-    background-color: #1E293B;
-    /* Slightly lighter background for the options page */
+}
+
+.page-wrapper {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    background-color: #1e293b;
     border-radius: 8px;
+    border: 1px solid #2e3d4f;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
 }
 
-h1 {
-    font-size: 1.5rem;
-    color: #6366F1;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.toggle-container {
-    display: grid;
-    grid-template-columns: 3fr 2fr 1fr;
-    align-items: center;
-    padding: 10px 0;
+/* Header Styling */
+.main-header {
+    background-color: #121a2c;
+    padding: 15px 25px;
     border-bottom: 1px solid #2e3d4f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
 }
 
-
-.toggle-container label {
-    font-size: 1rem;
-    color: #E0E0E0;
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
-.toggle-container input {
-    width: 40px;
-    height: 20px;
-    border-radius: 10px;
-    background-color: #2e3d4f;
-    /* Dark color for off position */
-    appearance: none;
-    cursor: pointer;
+.logo-header {
+    height: 40px;
+    width: auto;
+    border-radius: 5px;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    color: #6366f1;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Header Donate Button */
+.header-donate-button {
+    background-color: #e2b911;
+    color: #121a2c;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.5em 1em;
+    border-radius: 0.375rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.header-donate-button:hover {
+    background-color: #c0a10e;
+}
+
+/* Main Settings Area */
+.settings-main {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.settings-section {
+    background-color: #2d3748;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #4a5568;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section-heading {
+    font-size: 1.25rem;
+    color: #6366f1;
+    margin: 0;
+    font-weight: 600;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #4a5568;
+}
+
+.section-description {
+    font-size: 0.85rem;
+    color: #cbd5e0;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Divider between API Key and User ID */
+.section-divider {
+    border: none;
+    border-top: 1px solid #4a5568;
+    margin: 10px 0;
+}
+
+/* --- Generic Setting Row with CSS Grid --- */
+.setting-row {
+    display: grid;
+    /* NEW: Define 3 columns: Label (2fr), Input (3fr), Button (1fr) */
+    grid-template-columns:
+        2fr 3fr minmax(70px, 1fr); /* minmax to ensure button size */
+    align-items: center; /* Vertically center items in their grid cells */
+    gap: 15px; /* Gap between columns */
+    position: relative; /* For the setting-note to position properly */
+}
+
+/* Responsive adjustment for small screens */
+@media (max-width: 600px) {
+    .setting-row:not(.toggle-row) {
+        /* Apply only to non-toggle rows */
+        grid-template-columns: 1fr; /* Stack items on small screens */
+        gap: 10px; /* Adjust gap when stacked */
+    }
+
+    .setting-row:not(.toggle-row) .setting-label {
+        min-width: unset; /* Allow label to take natural width */
+        justify-content: flex-start; /* Ensure left alignment */
+    }
+    .setting-row:not(.toggle-row) .text-input {
+        /* Target the input directly */
+        width: 100%; /* Take full width when stacked */
+    }
+    .setting-row:not(.toggle-row) .action-button {
+        /* Target buttons directly */
+        width: 100%; /* Take full width when stacked */
+    }
+}
+
+/* Specific styles for the toggle row to maintain its unique layout */
+.toggle-row {
+    grid-template-columns: 2fr minmax(50px, 1fr); /* Label | Toggle Switch */
+    gap: 15px;
+}
+.toggle-row .setting-label {
+    min-width: unset;
+}
+.toggle-row .toggle-switch {
+    margin-left: auto; /* Push toggle to the right */
+}
+
+.setting-label {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     position: relative;
+    min-width: unset;
+    flex-basis: unset;
+    margin-right: unset;
 }
 
-.toggle-container input:checked {
-    background-color: #4A90E2;
-    /* Blue color for on position */
+/* Info Icon and Tooltip */
+.info-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
 }
 
-.toggle-container input:before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
+.info-icon {
+    color: #6366f1;
+    cursor: help;
     width: 16px;
     height: 16px;
-    border-radius: 50%;
-    background-color: #fff;
-    transition: left 0.3s ease;
+    margin-left: 2px;
 }
 
-.toggle-container input:checked:before {
-    left: 22px;
-}
-
-.button {
-    display: block;
-    width: 90%;
+.tooltip-content {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    background-color: #334155;
+    color: #f8fafc;
     padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    font-size: 1rem;
-    color: #FFFFFF;
-    background-color: #6366F1;
-    text-decoration: none;
-    text-align: center;
-    transition: background-color 0.2s ease;
-    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    width: 250px;
+    z-index: 10;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
 }
 
-.button:hover {
-    background-color: #4A90E2;
+.info-icon-wrapper:hover .tooltip-content,
+.info-icon-wrapper:focus-within .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
 }
 
-.logo {
-    width: auto;
-    /* Maintain the aspect ratio */
-    height: 60px;
-    /* Keep the height as you set */
-    border-radius: 5px;
-    /* Make the image edges rounded */
+/* Styling for code snippet inside tooltip */
+.code-snippet {
+    background-color: #4a5568;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8em;
+    color: #f8fafc;
+    white-space: pre-wrap;
+    word-break: break-all;
     display: block;
-    /* Makes the image behave as a block element */
-    margin: 0 auto;
-    /* Centers the image horizontally */
-}
-.feedback-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4em;
-  margin-top: 1em;
-  padding: 0.5em 1em;
-  background-color: #2d3748; /* dark gray */
-  color: #fff;
-  border: none;
-  border-radius: 0.375rem; /* 6px */
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
+    margin-top: 5px;
+    line-height: 1.2;
 }
 
-.feedback-button:hover {
-  background-color: #4a5568; /* slightly lighter gray */
+.highlight {
+    color: #6366f1;
+    font-weight: 600;
+}
+
+/* Styles for full-width descriptive/help text */
+.setting-note,
+.setting-help-text {
+    grid-column: 1 / -1; /* Spans across all grid columns */
+    font-size: 0.75rem;
+    color: #cbd5e0; /* or #94A3B8 for help text specifically */
+    line-height: 1.4;
+    margin-top: -10px; /* Pull it up a bit */
+    text-align: left;
+    padding-left: 0;
+}
+
+/* Text Input - now a direct grid item */
+.text-input {
+    /* No flex-grow here anymore, grid manages its width */
+    padding: 10px 12px;
+    border: 1px solid #4a5568;
+    border-radius: 6px;
+    background-color: #334155;
+    color: #f8fafc;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    width: auto; /* Grid handles its width now */
+    /* NEW: Specific grid column placement */
+    grid-column: 2; /* Place input in the second column */
+}
+
+.text-input::placeholder {
+    color: #64748b;
+}
+
+.text-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/* Action Buttons (Save/Delete) - now direct grid items */
+.action-button {
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        opacity 0.3s ease,
+        visibility 0.3s ease; /* Transition opacity and visibility */
+    min-width: 70px; /* Still a minimum width */
+    box-sizing: border-box;
+    /* NEW: Specific grid column placement */
+    grid-column: 3; /* Place button in the third column */
+}
+
+.save-button {
+    background-color: #5558e0;
+}
+
+.save-button:hover {
+    background-color: #4346bb;
+}
+
+.delete-button {
+    background-color: #b05555;
+}
+
+.delete-button:hover {
+    background-color: #924040;
+}
+
+/* Utility class to hide elements */
+/* This is now simply display: none */
+.hidden {
+    display: none !important; /* <--- CRITICAL CHANGE: Use display: none */
+}
+
+/* Custom Toggle Switch for App Toggle */
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    /* grid will handle its placement in toggle-row */
+    flex-shrink: 0; /* Keep flex-shrink for its internal behavior if flex container */
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4a5568;
+    transition: 0.4s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #6366f1;
+}
+
+input:focus + .toggle-slider {
+    box-shadow: 0 0 1px #6366f1;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* Footer Styling */
+.main-footer {
+    padding: 20px 25px;
+    background-color: #121a2c;
+    border-top: 1px solid #2e3d4f;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    padding: 0.6em 1.2em;
+    background-color: #2d3748;
+    color: #fff;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+.footer-button:hover {
+    background-color: #4a5568;
 }

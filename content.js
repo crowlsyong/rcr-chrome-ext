@@ -278,9 +278,8 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
                 <div class="flex flex-col">
                     <div class="items-center whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row">
                         <span class="inline-block" style="font-size: 1em; margin-right: 0.1em;">🦝</span>
-                        <span style="color: ${scoreColor};">${
-        creditScore !== null ? creditScore : "N/A"
-      }</span>
+                        <span style="color: ${scoreColor};">${creditScore !== null ? creditScore : "N/A"
+        }</span>
                     </div>
                     <div class="text-ink-600 mx-auto -mt-1 text-xs transition-all">credit score</div>
                 </div>
@@ -308,9 +307,8 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
         popup.style.position = "absolute";
         // Adjust top position slightly if needed, considering the box height
         popup.style.top = `${rect.top + window.scrollY - 60}px`;
-        popup.style.left = `${
-          rect.left + window.scrollX + injectedBox.offsetWidth + 10
-        }px`;
+        popup.style.left = `${rect.left + window.scrollX + injectedBox.offsetWidth + 10
+          }px`;
         popup.style.borderRadius = "10px";
         popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
         popup.style.zIndex = "1000";
@@ -437,8 +435,7 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
       const spanElement = document.querySelector(usernameSpanSelector);
       if (spanElement && spanElement.textContent.trim() === expectedText) {
         console.log(
-          `RISK Tools: Username span found for ${username} on attempt ${
-            attempt + 1
+          `RISK Tools: Username span found for ${username} on attempt ${attempt + 1
           }.`
         );
         return true; // Success

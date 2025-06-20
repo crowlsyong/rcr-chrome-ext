@@ -1,139 +1,129 @@
 // options.js
-// Function to apply dark mode styles on manifold.markets
-function applyDarkMode() {
-  console.log("Applying dark mode...");
 
-  // Check if we're on manifold.markets
-  if (window.location.hostname === "manifold.markets") {
-    const style = document.createElement("style");
-    style.innerHTML = `
-            html, body {
-                background-color: #000000 !important;
-                color: #e0e0e0 !important;
-            }
-            .bg-canvas-0 {
-                background-color: #000000 !important;
-            }
-            :root {
-                --color-canvas-0: 0 0 0 !important;
-            }
-        `;
-    document.head.appendChild(style);
+// Reusing global functions from previous version if they exist, otherwise defining
+// (These are the original ones that were meant to apply to Manifold.markets, not options page)
+// Keeping them commented as they are not used on options.html
+/*
+function applyDarkMode() { ... }
+function removeDarkMode() { ... }
+*/
 
-    // Dynamically load theme-black.js
-    const script = document.createElement("script");
-    script.src = chrome.runtime.getURL("themes/theme-black.js"); // Path to your theme-black.js file
-    document.head.appendChild(script);
+// Function to update status message with fade-out
+function showStatus(element, message, isSuccess = true) {
+    element.textContent = message;
+    element.style.opacity = '1';
+    element.style.transition = 'opacity 0.1s ease-in'; // Immediate visibility
 
-    // Apply data-theme for dark mode
-    document.documentElement.setAttribute("data-theme", "dark");
-  }
+    if (isSuccess) {
+        element.style.color = "#4CAF50"; // Green for success
+    } else {
+        element.style.color = "#EF4444"; // Red for errors/deletions
+    }
+
+    // Fade out after a short delay
+    setTimeout(() => {
+        element.style.transition = 'opacity 1s ease-out'; // Fade out transition
+        element.style.opacity = '0';
+        setTimeout(() => {
+            element.textContent = ""; // Clear text after fade
+            element.style.transition = 'none'; // Reset for next show
+        }, 1000); // Match fade transition duration
+    }, 2000); // Show for 2 seconds before fading
 }
 
-// Function to remove dark mode styles
-function removeDarkMode() {
-  console.log("Removing dark mode...");
+// options.js
 
-  // Check if we're on manifold.markets before removing styles
-  if (window.location.hostname === "manifold.markets") {
-    const style = document.createElement("style");
-    style.innerHTML = `
-            html, body {
-                background-color: #ffffff !important;
-                color: #000000 !important;
-            }
-            .bg-canvas-0 {
-                background-color: #ffffff !important;
-            }
-            :root {
-                --color-canvas-0: 255 255 255 !important;
-            }
-        `;
-    document.head.appendChild(style);
+// No showStatus function needed as per request. Removed.
 
-    // Remove data-theme for light mode
-    document.documentElement.removeAttribute("data-theme");
-  }
+// Function to manage Save/Delete button state and input value
+function setupStorageItem(storageKey, inputElement, saveButton, deleteButton) { // Removed statusElement arg
+
+    // Update button text/class/visibility based on existence of key
+    function updateButtonState(keyExists) {
+        if (keyExists) {
+            // If key exists, hide save button, show delete button
+            saveButton.classList.add("hidden"); // Hide save button
+            deleteButton.classList.remove("hidden"); // Show delete button
+            // Ensure input is not cleared if key exists
+        } else {
+            // If no key, show save button, hide delete button
+            saveButton.classList.remove("hidden"); // Show save button
+            saveButton.textContent = "Save"; // Ensure save button text is correct
+            deleteButton.classList.add("hidden"); // Hide delete button
+            inputElement.value = ""; // Clear input when no key
+        }
+    }
+
+    // Load saved value on page load
+    chrome.storage.local.get(storageKey, function (result) {
+        if (result[storageKey]) {
+            inputElement.value = result[storageKey];
+            updateButtonState(true);
+        } else {
+            inputElement.value = ""; // Ensure empty input
+            updateButtonState(false);
+        }
+    });
+
+    // Save button click listener
+    saveButton.addEventListener("click", function () {
+        const value = inputElement.value.trim();
+        if (value) {
+            chrome.storage.local.set({ [storageKey]: value }, function () {
+                // No status message
+                updateButtonState(true); // Update state to saved
+            });
+        } else {
+            // If save clicked with empty field, treat as a deletion
+            chrome.storage.local.remove(storageKey, function () {
+                // No status message
+                updateButtonState(false); // Update state to not saved
+            });
+        }
+    });
+
+    // Delete button click listener
+    deleteButton.addEventListener("click", function () {
+        chrome.storage.local.remove(storageKey, function () {
+            // No status message
+            updateButtonState(false); // Update state to not saved (clears input, hides delete, shows save)
+        });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // --- Existing Dark Mode Logic (already in your options.js) ---
-  // Retrieve dark mode state from chrome storage
-  chrome.storage.local.get("darkMode", (result) => {
-    console.log("Retrieved dark mode state:", result.darkMode);
-    if (result.hasOwnProperty("darkMode")) {
-      const toggle = document.getElementById("dark-mode-toggle");
-      if (toggle) {
-        toggle.checked = result.darkMode;
-        // Apply the corresponding theme immediately when page loads
-        if (result.darkMode) {
-          applyDarkMode();
-        } else {
-          removeDarkMode();
-        }
-      }
-    } else {
-      console.log("No stored dark mode preference found.");
+    // --- App Toggle Logic ---
+    const appToggle = document.getElementById('app-toggle');
+
+    if (appToggle) {
+        chrome.storage.local.get('creditScoreState', function (result) {
+            if (result.creditScoreState !== undefined) {
+                appToggle.checked = result.creditScoreState;
+            }
+        });
+
+        appToggle.addEventListener('change', function () {
+            const newState = appToggle.checked;
+            chrome.storage.local.set({ 'creditScoreState': newState }, function () {
+                console.log('App toggle state saved: ' + newState);
+            });
+        });
     }
-  });
 
-  // Listen for toggle change and save it to chrome storage
-  const darkModeToggle = document.getElementById("dark-mode-toggle");
-  if (darkModeToggle) {
-    darkModeToggle.addEventListener("change", (event) => {
-      const darkModeState = event.target.checked;
-      console.log("Dark mode state changed:", darkModeState);
+    // --- Manifold API Key Setup ---
+    const apiKeyInput = document.getElementById("manifold-api-key");
+    const saveApiKeyButton = document.getElementById("save-api-key");
+    const deleteApiKeyButton = document.getElementById("delete-api-key");
+    // Removed apiKeyStatus as it's no longer used
 
-      // Save the state to chrome storage
-      chrome.storage.local.set({ darkMode: darkModeState }, () => {
-        console.log("Dark mode preference saved:", darkModeState);
+    setupStorageItem('manifoldApiKey', apiKeyInput, saveApiKeyButton, deleteApiKeyButton); // Removed statusElement arg
 
-        // Apply the dark mode setting immediately
-        if (darkModeState) {
-          applyDarkMode();
-        } else {
-          removeDarkMode();
-        }
-      });
-    });
-  }
+    // --- Manifold User ID Setup ---
+    const userIdInput = document.getElementById("manifold-user-id");
+    const saveUserIdButton = document.getElementById("save-user-id");
+    const deleteUserIdButton = document.getElementById("delete-user-id");
+    // Removed userIdStatus as it's no longer used
 
-  // --- NEW: Manifold API Key Logic ---
-  const apiKeyInput = document.getElementById("manifold-api-key");
-  const saveApiKeyButton = document.getElementById("save-api-key");
-  const apiKeyStatus = document.getElementById("api-key-status");
+    setupStorageItem('manifoldUserId', userIdInput, saveUserIdButton, deleteUserIdButton); // Removed statusElement arg
 
-  // Load saved API key on page load
-  chrome.storage.local.get("manifoldApiKey", function (result) {
-    if (result.manifoldApiKey) {
-      apiKeyInput.value = result.manifoldApiKey;
-      apiKeyStatus.textContent = "API Key loaded.";
-    } else {
-      apiKeyStatus.textContent = "No API Key saved.";
-    }
-  });
-
-  // Save API key when button is clicked
-  saveApiKeyButton.addEventListener("click", function () {
-    const apiKey = apiKeyInput.value.trim();
-    if (apiKey) {
-      chrome.storage.local.set({ manifoldApiKey: apiKey }, function () {
-        apiKeyStatus.textContent = "API Key saved successfully!";
-        apiKeyStatus.style.color = "#4CAF50"; // Green for success
-        console.log("Manifold API Key saved.");
-      });
-    } else {
-      // If the field is empty, remove the stored key
-      chrome.storage.local.remove("manifoldApiKey", function () {
-        apiKeyStatus.textContent = "API Key removed.";
-        apiKeyStatus.style.color = "#FFC107"; // Orange for warning
-        console.log("Manifold API Key removed (field was empty).");
-      });
-    }
-    // Clear status message after a few seconds
-    setTimeout(() => {
-      apiKeyStatus.textContent = "";
-      apiKeyStatus.style.color = "#aaa";
-    }, 3000);
-  });
 });
