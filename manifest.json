@@ -41,7 +41,7 @@
       "run_at": "document_start"
     },
     {
-      "matches": ["https://risk.markets/*"],
+      "matches": ["https://risk.markets/*", "http://localhost:8000/*"],
       "js": ["api-inject.js"],
       "run_at": "document_idle"
     }
