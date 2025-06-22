@@ -17,21 +17,9 @@
       "128": "icons/raccoon-128.png"
     }
   },
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
-    "tabs",
-    "webRequest",
-    "webNavigation",
-    "alarms",
-    "contextMenus",
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "declarativeNetRequestWithHostAccess"
-  ],
+  "permissions": ["storage", "tabs", "scripting", "alarms"],
   "host_permissions": [
-    "https://manifold.markets/",
+    "https://manifold.markets/*",
     "https://risk.markets/*"
   ],
   "content_scripts": [

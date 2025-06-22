@@ -140,7 +140,7 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
 
       const container = getContainerElement();
       if (!container) {
-        console.warn(
+        console.log(
           "RISK Tools: addCreditScoreBox - Container element not found. This should not happen if wait for username span was successful."
         );
         return;
