@@ -119,9 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
     setupStorageItem('manifoldApiKey', apiKeyInput, saveApiKeyButton, deleteApiKeyButton); // Removed statusElement arg
 
     // --- Manifold User ID Setup ---
-    const userIdInput = document.getElementById("manifold-user-id");
-    const saveUserIdButton = document.getElementById("save-user-id");
-    const deleteUserIdButton = document.getElementById("delete-user-id");
+    // const userIdInput = document.getElementById("manifold-user-id");
+    // const saveUserIdButton = document.getElementById("save-user-id");
+    // const deleteUserIdButton = document.getElementById("delete-user-id");
     // Removed userIdStatus as it's no longer used
 
     setupStorageItem('manifoldUserId', userIdInput, saveUserIdButton, deleteUserIdButton); // Removed statusElement arg
