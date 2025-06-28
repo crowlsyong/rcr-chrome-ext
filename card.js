@@ -108,8 +108,8 @@ window.RISKToolsCard.createRiskCardHTML = async function (
         }
 
         // Credit score can be 0 (e.g. for Tumbles) or null if not set, which is fine.
-        // AvatarURL and riskMultiplier should exist if userExists is true.
-        if (typeof userData.creditScore === 'undefined' || !userData.avatarUrl || typeof userData.riskMultiplier === 'undefined') {
+        // AvatarURL and riskBaseFee should exist if userExists is true.
+        if (typeof userData.creditScore === 'undefined' || !userData.avatarUrl || typeof userData.riskBaseFee === 'undefined') {
             console.error(`RISK Tools (card.js): Incomplete data for existing user ${username}`, userData);
             return `<div class="p-4 md:p-6 rounded-lg bg-slate-900 text-white" style="background-color: #0F1729; border: 2px solid #4A5568;">Incomplete data for ${username}. Score or other details missing.</div>`;
         }
@@ -117,13 +117,13 @@ window.RISKToolsCard.createRiskCardHTML = async function (
 
         const creditScore = userData.creditScore;
         const avatarUrl = userData.avatarUrl;
-        const riskMultiplier = userData.riskMultiplier;
+        const riskBaseFee = userData.riskBaseFee;
         const riskLevelText = getRiskLevelText(creditScore);
         const scoreColor = getScoreColor(creditScore);
         // Use a slightly darker version of scoreColor for background or a fixed one
         const riskLevelBackgroundColor = scoreColor; // Or a calculated darker shade
 
-        const formattedRiskMultiplier = (riskMultiplier * 100).toFixed(0);
+        const formattedriskBaseFee = (riskBaseFee * 100).toFixed(0);
 
         const cardContentHtml = `
 <a href="https://risk.markets/chart/${username}" target="_blank" rel="noopener noreferrer" class="block w-80 p-4 md:p-6 rounded-lg text-white transition-all duration-100 cursor-pointer" style="border: 2px solid ${scoreColor}; background-color: #0F1729; box-sizing: border-box;" onmouseover="this.style.backgroundColor='#121c30';" onmouseout="this.style.backgroundColor='#0F1729';">
@@ -132,7 +132,7 @@ window.RISKToolsCard.createRiskCardHTML = async function (
             <img src="${avatarUrl}" alt="${username}'s avatar" class="w-12 h-12 rounded-full mr-2 border border-slate-600">
             <div>
                 <h2 class="text-xl font-semibold">${username}</h2>
-                <p class="text-xs text-slate-400">Risk Multiplier: ${formattedRiskMultiplier}%</p>
+                <p class="text-xs text-slate-400">Risk Multiplier: ${formattedriskBaseFee}%</p>
             </div>
             <div class="flex flex-col text-right ml-auto">
                 <span class="text-xs text-slate-400">Credit Score:</span>
