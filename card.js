@@ -85,7 +85,7 @@ window.RISKToolsCard.createRiskCardHTML = async function (
                 `RISK Tools (card.js): User data for ${username} not passed, fetching...`
             );
             const response = await fetch(
-                `https://risk.markets/api/score?username=${username}`
+                `https://risk.markets/api/v0/score?username=${username}`
             );
             if (!response.ok) {
                 console.error(

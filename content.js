@@ -70,7 +70,7 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
   async function fetchUserData(username) {
     try {
       const response = await fetch(
-        `https://risk.markets/api/score?username=${username}`
+        `https://risk.markets/api/v0/score?username=${username}`
       );
       if (!response.ok) {
         console.error(
