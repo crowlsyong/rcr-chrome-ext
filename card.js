@@ -84,8 +84,9 @@ window.RISKToolsCard.createRiskCardHTML = async function (
             console.log(
                 `RISK Tools (card.js): User data for ${username} not passed, fetching...`
             );
+            // UPDATED: Using the new backend credit-score endpoint
             const response = await fetch(
-                `https://risk.markets/api/v0/score?username=${username}`
+                `https://risk.markets/api/v0/credit-score?username=${username}`
             );
             if (!response.ok) {
                 console.error(
@@ -126,7 +127,7 @@ window.RISKToolsCard.createRiskCardHTML = async function (
         const formattedriskBaseFee = (riskBaseFee * 100).toFixed(0);
 
         const cardContentHtml = `
-<a href="https://risk.markets/chart/${username}" target="_blank" rel="noopener noreferrer" class="block w-80 p-4 md:p-6 rounded-lg text-white transition-all duration-100 cursor-pointer" style="border: 2px solid ${scoreColor}; background-color: #0F1729; box-sizing: border-box;" onmouseover="this.style.backgroundColor='#121c30';" onmouseout="this.style.backgroundColor='#0F1729';">
+<a href="https://risk.markets/chart?q=${username}" target="_blank" rel="noopener noreferrer" class="block w-80 p-4 md:p-6 rounded-lg text-white transition-all duration-100 cursor-pointer" style="border: 2px solid ${scoreColor}; background-color: #0F1729; box-sizing: border-box;" onmouseover="this.style.backgroundColor='#121c30';" onmouseout="this.style.backgroundColor='#0F1729';">
     <div class="flex-col items-center">
         <div class="flex items-center mb-4">
             <img src="${avatarUrl}" alt="${username}'s avatar" class="w-12 h-12 rounded-full mr-2 border border-slate-600">

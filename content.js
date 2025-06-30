@@ -69,8 +69,9 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
   // Function to fetch full user data using the API
   async function fetchUserData(username) {
     try {
+      // UPDATED: Using the new backend credit-score endpoint
       const response = await fetch(
-        `https://risk.markets/api/v0/score?username=${username}`
+        `https://risk.markets/api/v0/credit-score?username=${username}`
       );
       if (!response.ok) {
         console.error(
@@ -105,6 +106,7 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
     if (existingBoxes.length > 0) {
       console.log(
         `RISK Tools: Removed ${existingBoxes.length} Credit Score Box(es).`
+
       );
     }
     removeRiskCardPopup();
@@ -276,7 +278,7 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
       // Update the box content with the fetched data
       injectedBox.innerHTML = `
                 <div class="flex flex-col">
-                    <div class="items-center whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row">
+                    <div class="items-center whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row justify-center">
                         <span class="inline-block" style="font-size: 1em; margin-right: 0.1em;">🦝</span>
                         <span style="color: ${scoreColor};">${creditScore !== null ? creditScore : "N/A"
         }</span>
@@ -289,7 +291,8 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
       // Add click listener
       injectedBox.addEventListener("click", function (e) {
         if (e.target.closest("button")) return;
-        window.open(`https://risk.markets/?q=${username}`, "_blank");
+        // UPDATED: Link directly to the main credit score app page on your website
+        window.open(`https://risk.markets?q=${username}`, "_blank");
       });
 
       // Add mouseenter listener for popup
