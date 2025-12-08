@@ -9,23 +9,26 @@
 </head>
 
 <body>
-  <!-- <img src="./images/fire.gif" alt="Fire Background"
-    style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 0; width: 200vw; height: auto; opacity: 0.15; pointer-events: none;" /> -->
-
   <div class="content-wrapper">
     <img src="./images/risk-logo-mini.png" alt="RISK Logo" class="logo" />
     <p style="margin-top: 5px; margin-bottom: 25px;">
       Recovery Insurance Service Kiosk
     </p>
-    <!-- Toggle Switch for Showing Credit Score -->
+
     <div class="toggle-container">
       <label for="credit-score-toggle">View credit score in app</label>
       <input type="checkbox" id="credit-score-toggle" />
     </div>
-    <!-- Feedback Button -->
-    <div style="text-align: right;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+      <a id="version-link" href="https://github.com/crowlsyong/rcr-chrome-ext/releases/tag/v1.0.4" target="_blank"
+        rel="noopener noreferrer">
+        v1.0.4
+      </a>
+
+
       <a href="https://github.com/crowlsyong/rcr-chrome-ext/issues" target="_blank" rel="noopener noreferrer"
-        class="feedback-button" width="100%">
+        class="feedback-button">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"
           style="vertical-align: middle; margin-right: 6px;">
           <path
@@ -35,9 +38,9 @@
       </a>
     </div>
 
-    <!-- Settings link with only the icon -->
     <a href="options.html" class="settings-link" target="_blank">⚙️</a>
   </div>
+
   <script src="popup.js"></script>
 </body>
 

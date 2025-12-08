@@ -135,3 +135,14 @@ p {
 .feedback-button:hover {
   background-color: #4a5568; /* slightly lighter gray */
 }
+
+#version-link {
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  margin-top: 1em;
+}
+
+#version-link:hover {
+  text-decoration: underline;
+}
