@@ -167,76 +167,69 @@ window.RISKToolsCard = window.RISKToolsCard || {}; // Ensure namespace exists
       }
 
       // --- Function to attempt injecting the box ---
-      const attemptInjection = (attempt) => {
-        console.log(`RISK Tools: Attempting injection (Attempt ${attempt})...`);
-        const boxes = container.querySelectorAll(".group.cursor-pointer");
+const attemptInjection = (attempt) => {
+  console.log(`RISK Tools: Attempting injection (Attempt ${attempt})...`);
+  const boxes = container.querySelectorAll(".group.cursor-pointer");
 
-        // Double-check if the box already exists before trying to inject
-        if (document.querySelector(`.${creditScoreBoxClass}`)) {
-          console.log(
-            `RISK Tools: Box already exists during attempt ${attempt}, skipping injection.`
-          );
-          return document.querySelector(`.${creditScoreBoxClass}`); // Return the existing box
+  if (document.querySelector(`.${creditScoreBoxClass}`)) {
+    console.log(
+      `RISK Tools: Box already exists during attempt ${attempt}, skipping injection.`
+    );
+    return document.querySelector(`.${creditScoreBoxClass}`);
+  }
+
+  if (boxes.length < 4) {
+    console.log(
+      `RISK Tools: Only ${boxes.length} native cards present, delaying injection.`
+    );
+    return false;
+  }
+
+  const newBox = document.createElement("div");
+  newBox.className =
+    "group cursor-pointer select-none rounded px-2 py-1 transition-colors opacity-[0.75] hover:opacity-100 bg-canvas-50 text-ink-1000 risk-credit-box";
+  newBox.innerHTML = `
+                <div class="flex flex-col">
+                    <div class="items-center whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row justify-center">
+                        <svg class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                    </div>
+                </div>
+                `;
+
+  const lastBox = boxes[boxes.length - 1];
+  const linkWrapper = lastBox.closest("a");
+  const insertionTarget =
+    linkWrapper && linkWrapper.parentElement === container
+      ? linkWrapper
+      : lastBox;
+
+  insertionTarget.insertAdjacentElement("afterend", newBox);
+  console.log(
+    `RISK Tools: Placeholder Credit Score Box element injected as last item in the row.`
+  );
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const injectedBox = document.querySelector(`.${creditScoreBoxClass}`);
+      if (injectedBox) {
+        console.log(`RISK Tools: Injection successful (Attempt ${attempt}).`);
+        resolve(injectedBox);
+      } else {
+        console.warn(
+          `RISK Tools: Injection failed on Attempt ${attempt}. Box not found in container after insertion.`
+        );
+        if (newBox.parentElement) {
+          newBox.remove();
         }
+        resolve(false);
+      }
+    }, 50);
+  });
+};
 
-        if (boxes.length >= 4) {
-          console.warn(
-            `RISK Tools: Container already has ${boxes.length} boxes, cannot inject.`
-          );
-          return false; // Failed to inject due to full container
-        }
-
-        const newBox = document.createElement("div");
-        newBox.className =
-          "group cursor-pointer select-none rounded px-2 py-1 transition-colors opacity-[0.75] hover:opacity-100 bg-canvas-50 text-ink-1000 risk-credit-box";
-        // Initial content: a loader
-        newBox.innerHTML = `
-                        <div class="flex flex-col">
-                            <div class="items-center px-2 py-1 whitespace-nowrap font-bold transition-all bg-canvas-50 text-ink-1000 flex flex-row justify-center">
-                                <svg class="animate-spin h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        `;
-
-        // Insert the box into the DOM
-        if (boxes.length === 3) {
-          boxes[2].insertAdjacentElement("afterend", newBox);
-          console.log(
-            `RISK Tools: Placeholder Credit Score Box element injected after the third item.`
-          );
-        } else {
-          container.appendChild(newBox);
-          console.log(
-            `RISK Tools: Placeholder Credit Score Box element appended to the container.`
-          );
-        }
-
-        // Check if the injection was successful by querying the DOM
-        // Use setTimeout to allow DOM to update if needed, although direct query is often synchronous
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const injectedBox = document.querySelector(
-              `.${creditScoreBoxClass}`
-            );
-            if (injectedBox) {
-              console.log(`RISK Tools: Injection successful (Attempt ${attempt}).`);
-              resolve(injectedBox); // Resolve with the injected box element
-            } else {
-              console.warn(
-                `RISK Tools: Injection failed on Attempt ${attempt}. Box not found in container after insertion.`
-              );
-              // Clean up the created box if it somehow wasn't added correctly
-              if (newBox.parentElement) {
-                newBox.remove();
-              }
-              resolve(false); // Resolve with false to indicate failure
-            }
-          }, 50); // Small delay for DOM potentially settling
-        });
-      };
       // --- End of attemptInjection function ---
 
       // --- Injection retry logic ---
